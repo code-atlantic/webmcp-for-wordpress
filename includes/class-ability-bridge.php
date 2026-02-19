@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Ability_Bridge {
 
-	/** Object cache key prefix for the tools list. */
+	/** Object cache group for the tools list. */
 	const CACHE_GROUP = 'wmcp_bridge';
 
 	/** @var Settings */
@@ -53,11 +53,11 @@ class Ability_Bridge {
 	 * @return array<int, array>
 	 */
 	private function build_tools(): array {
-		if ( ! function_exists( 'wp_get_registered_abilities' ) ) {
+		if ( ! function_exists( 'wp_get_abilities' ) ) {
 			return array();
 		}
 
-		$abilities = wp_get_registered_abilities();
+		$abilities = wp_get_abilities();
 		$tools     = array();
 
 		foreach ( $abilities as $name => $ability ) {
@@ -71,16 +71,16 @@ class Ability_Bridge {
 	}
 
 	/**
-	 * Convert a single ability to a WebMCP tool definition.
+	 * Convert a single WP_Ability to a WebMCP tool definition.
 	 * Returns null if the ability should not be exposed.
 	 *
-	 * @param string $name    Ability identifier.
-	 * @param array  $ability Ability definition array.
+	 * @param string      $name    Ability identifier.
+	 * @param \WP_Ability $ability Ability object.
 	 * @return array|null
 	 */
-	public function convert( string $name, array $ability ): ?array {
+	public function convert( string $name, \WP_Ability $ability ): ?array {
 		// 1. Check wmcp_visibility flag — 'private' always hides.
-		$visibility = $ability['wmcp_visibility'] ?? 'public';
+		$visibility = $ability->get_meta_item( 'wmcp_visibility', 'public' );
 		if ( 'private' === $visibility ) {
 			return null;
 		}
@@ -91,19 +91,18 @@ class Ability_Bridge {
 		}
 
 		// 3. Check permission callback for the current user.
-		if ( ! empty( $ability['permission_callback'] ) && is_callable( $ability['permission_callback'] ) ) {
-			if ( ! call_user_func( $ability['permission_callback'] ) ) {
-				return null;
-			}
+		$permission = $ability->check_permissions();
+		if ( true !== $permission ) {
+			return null;
 		}
 
 		// 4. Validate and sanitize the inputSchema.
-		$input_schema = $this->validate_schema( $ability['inputSchema'] ?? array() );
+		$input_schema = $this->validate_schema( $ability->get_input_schema() );
 
 		// 5. Build the tool definition.
 		$tool = array(
 			'name'        => $name,
-			'description' => wp_strip_all_tags( $ability['description'] ?? $ability['label'] ?? $name ),
+			'description' => wp_strip_all_tags( $ability->get_description() ),
 			'inputSchema' => $input_schema,
 		);
 
@@ -111,9 +110,9 @@ class Ability_Bridge {
 		 * Filter the WebMCP tool definition before it's sent to the browser.
 		 * Use to customize description, add tool annotations, etc.
 		 *
-		 * @param array  $tool    The tool definition.
-		 * @param string $name    The ability name.
-		 * @param array  $ability The full ability definition.
+		 * @param array       $tool    The tool definition.
+		 * @param string      $name    The ability name.
+		 * @param \WP_Ability $ability The ability object.
 		 */
 		$tool = apply_filters( 'wmcp_tool_definition', $tool, $name, $ability );
 
@@ -121,9 +120,9 @@ class Ability_Bridge {
 		 * Filter whether an ability is exposed via WebMCP.
 		 * Return false to hide a tool from discovery.
 		 *
-		 * @param bool   $expose  Whether to expose this ability.
-		 * @param string $name    Ability name.
-		 * @param array  $ability Full ability definition.
+		 * @param bool        $expose  Whether to expose this ability.
+		 * @param string      $name    Ability name.
+		 * @param \WP_Ability $ability The ability object.
 		 */
 		if ( ! apply_filters( 'wmcp_expose_ability', true, $name, $ability ) ) {
 			return null;
@@ -145,20 +144,10 @@ class Ability_Bridge {
 		}
 
 		if ( $this->schema_depth( $schema ) > 5 ) {
-			_doing_it_wrong(
-				'wp_register_ability',
-				esc_html__( 'WebMCP Bridge: inputSchema exceeds maximum depth of 5. This ability will be excluded from WebMCP tools.', 'webmcp-bridge' ),
-				'1.0.0'
-			);
 			return array( 'type' => 'object', 'properties' => array() );
 		}
 
 		if ( $this->schema_has_ref( $schema ) ) {
-			_doing_it_wrong(
-				'wp_register_ability',
-				esc_html__( 'WebMCP Bridge: inputSchema uses $ref which is not supported. This ability will be excluded from WebMCP tools.', 'webmcp-bridge' ),
-				'1.0.0'
-			);
 			return array( 'type' => 'object', 'properties' => array() );
 		}
 
@@ -169,9 +158,9 @@ class Ability_Bridge {
 	 * Compute the maximum nesting depth of an array/schema.
 	 *
 	 * @param array $schema Schema to inspect.
-	 * @param int   $depth  Current depth.
+	 * @param int   $depth  Current depth (1-based at the top level).
 	 */
-	private function schema_depth( array $schema, int $depth = 0 ): int {
+	private function schema_depth( array $schema, int $depth = 1 ): int {
 		$max = $depth;
 		foreach ( $schema as $value ) {
 			if ( is_array( $value ) ) {

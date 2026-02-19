@@ -18,6 +18,14 @@ if ( ! file_exists( "$_tests_dir/includes/functions.php" ) ) {
 	exit( 1 );
 }
 
+// Point WP bootstrap to PHPUnit Polyfills (required by WP test suite).
+if ( ! defined( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH' ) ) {
+	define( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH', dirname( __DIR__, 2 ) . '/vendor/yoast/phpunit-polyfills' );
+}
+
+// Must load functions.php before calling tests_add_filter().
+require_once "$_tests_dir/includes/functions.php";
+
 // Load the plugin.
 $_plugin_dir = dirname( __DIR__, 2 );
 

@@ -21,6 +21,23 @@ defined( 'ABSPATH' ) || exit;
  */
 class Builtin_Tools {
 
+	/** Ability category slug for all WebMCP built-in tools. */
+	const CATEGORY = 'webmcp';
+
+	/**
+	 * Register the WebMCP ability category.
+	 * Hooked into wp_abilities_api_categories_init.
+	 */
+	public function register_category(): void {
+		wp_register_ability_category(
+			self::CATEGORY,
+			array(
+				'label'       => __( 'WebMCP', 'webmcp-bridge' ),
+				'description' => __( 'Tools exposed to AI agents via the WebMCP browser API.', 'webmcp-bridge' ),
+			)
+		);
+	}
+
 	/**
 	 * Register all built-in tools as WordPress Abilities.
 	 * Hooked into wp_abilities_api_init.
@@ -52,7 +69,8 @@ class Builtin_Tools {
 			array(
 				'label'               => __( 'Search Posts', 'webmcp-bridge' ),
 				'description'         => __( 'Search published posts by keyword. Returns titles, excerpts, and URLs.', 'webmcp-bridge' ),
-				'inputSchema'         => array(
+				'category'            => self::CATEGORY,
+				'input_schema'        => array(
 					'type'       => 'object',
 					'properties' => array(
 						'query' => array(
@@ -69,7 +87,7 @@ class Builtin_Tools {
 					),
 					'required'   => array( 'query' ),
 				),
-				'outputSchema'        => array(
+				'output_schema'       => array(
 					'type'  => 'array',
 					'items' => array(
 						'type'       => 'object',
@@ -84,7 +102,7 @@ class Builtin_Tools {
 				),
 				'execute_callback'    => array( $this, 'execute_search_posts' ),
 				'permission_callback' => '__return_true',
-				'wmcp_visibility'     => 'public',
+				'meta'                => array( 'wmcp_visibility' => 'public' ),
 			)
 		);
 	}
@@ -130,7 +148,8 @@ class Builtin_Tools {
 			array(
 				'label'               => __( 'Get Post', 'webmcp-bridge' ),
 				'description'         => __( 'Retrieve a single post by its ID or slug. Returns the full post content, categories, tags, and metadata.', 'webmcp-bridge' ),
-				'inputSchema'         => array(
+				'category'            => self::CATEGORY,
+				'input_schema'        => array(
 					'type'       => 'object',
 					'properties' => array(
 						'id'   => array(
@@ -143,7 +162,7 @@ class Builtin_Tools {
 						),
 					),
 				),
-				'outputSchema'        => array(
+				'output_schema'       => array(
 					'type'       => 'object',
 					'properties' => array(
 						'id'         => array( 'type' => 'integer' ),
@@ -159,7 +178,7 @@ class Builtin_Tools {
 				),
 				'execute_callback'    => array( $this, 'execute_get_post' ),
 				'permission_callback' => '__return_true',
-				'wmcp_visibility'     => 'public',
+				'meta'                => array( 'wmcp_visibility' => 'public' ),
 			)
 		);
 	}
@@ -220,11 +239,12 @@ class Builtin_Tools {
 			array(
 				'label'               => __( 'Get Categories', 'webmcp-bridge' ),
 				'description'         => __( 'List all post categories with their names, descriptions, and post counts.', 'webmcp-bridge' ),
-				'inputSchema'         => array(
+				'category'            => self::CATEGORY,
+				'input_schema'        => array(
 					'type'       => 'object',
 					'properties' => array(),
 				),
-				'outputSchema'        => array(
+				'output_schema'       => array(
 					'type'  => 'array',
 					'items' => array(
 						'type'       => 'object',
@@ -240,7 +260,7 @@ class Builtin_Tools {
 				),
 				'execute_callback'    => array( $this, 'execute_get_categories' ),
 				'permission_callback' => '__return_true',
-				'wmcp_visibility'     => 'public',
+				'meta'                => array( 'wmcp_visibility' => 'public' ),
 			)
 		);
 	}
@@ -284,7 +304,8 @@ class Builtin_Tools {
 			array(
 				'label'               => __( 'Submit Comment', 'webmcp-bridge' ),
 				'description'         => __( 'Submit a comment on a post. Respects WordPress comment settings including open/closed comments and login requirements.', 'webmcp-bridge' ),
-				'inputSchema'         => array(
+				'category'            => self::CATEGORY,
+				'input_schema'        => array(
 					'type'       => 'object',
 					'properties' => array(
 						'post_id'      => array(
@@ -306,7 +327,7 @@ class Builtin_Tools {
 					),
 					'required'   => array( 'post_id', 'content' ),
 				),
-				'outputSchema'        => array(
+				'output_schema'       => array(
 					'type'       => 'object',
 					'properties' => array(
 						'comment_id' => array( 'type' => 'integer' ),
@@ -316,7 +337,7 @@ class Builtin_Tools {
 				),
 				'execute_callback'    => array( $this, 'execute_submit_comment' ),
 				'permission_callback' => array( $this, 'can_submit_comment' ),
-				'wmcp_visibility'     => 'public',
+				'meta'                => array( 'wmcp_visibility' => 'public' ),
 			)
 		);
 	}

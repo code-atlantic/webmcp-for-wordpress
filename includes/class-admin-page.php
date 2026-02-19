@@ -80,8 +80,8 @@ class Admin_Page {
 		}
 
 		// Get all registered abilities for the exposed-tools list.
-		$all_abilities = function_exists( 'wp_get_registered_abilities' )
-			? wp_get_registered_abilities()
+		$all_abilities = function_exists( 'wp_get_abilities' )
+			? wp_get_abilities()
 			: array();
 
 		$exposed_tools = $this->settings->get_exposed_tools();
@@ -159,25 +159,20 @@ class Admin_Page {
 							<fieldset>
 								<?php foreach ( $all_abilities as $name => $ability ) :
 									// Skip private tools — they should never appear in the UI.
-									if ( ( $ability['wmcp_visibility'] ?? 'public' ) === 'private' ) {
+									if ( 'private' === $ability->get_meta_item( 'wmcp_visibility', 'public' ) ) {
 										continue;
 									}
 
-									$label       = wp_strip_all_tags( $ability['label'] ?? $ability['description'] ?? $name );
-									$description = wp_strip_all_tags( $ability['description'] ?? '' );
+									$label       = wp_strip_all_tags( $ability->get_label() );
+									$description = wp_strip_all_tags( $ability->get_description() );
 
 									// An empty exposed list means "all exposed" (first install).
 									$is_checked = empty( $exposed_tools ) || in_array( $name, $exposed_tools, true );
 
-									// Determine permission label.
-									$perm_label = '';
-									if ( isset( $ability['permission_callback'] ) ) {
-										if ( '__return_true' === $ability['permission_callback'] ) {
-											$perm_label = __( 'Public', 'webmcp-bridge' );
-										} else {
-											$perm_label = __( 'Requires login', 'webmcp-bridge' );
-										}
-									}
+									// Determine permission label from meta visibility.
+									$perm_label = ( 'public' === $ability->get_meta_item( 'wmcp_visibility', 'public' ) )
+										? __( 'Public', 'webmcp-bridge' )
+										: __( 'Requires login', 'webmcp-bridge' );
 									?>
 									<label style="display:block; margin-bottom:6px;">
 										<input type="checkbox"
@@ -185,9 +180,7 @@ class Admin_Page {
 											value="<?php echo esc_attr( $name ); ?>"
 											<?php checked( $is_checked ); ?>>
 										<strong><?php echo esc_html( $label ); ?></strong>
-										<?php if ( $perm_label ) : ?>
-											<span style="color:#666; font-style:italic;">— <?php echo esc_html( $perm_label ); ?></span>
-										<?php endif; ?>
+										<span style="color:#666; font-style:italic;">— <?php echo esc_html( $perm_label ); ?></span>
 										<?php if ( $description && $description !== $label ) : ?>
 											<br><span class="description" style="margin-left:22px;"><?php echo esc_html( $description ); ?></span>
 										<?php endif; ?>
@@ -216,7 +209,7 @@ class Admin_Page {
 				</li>
 				<li>
 					<?php esc_html_e( 'WordPress Abilities API:', 'webmcp-bridge' ); ?>
-					<?php if ( function_exists( 'wp_get_registered_abilities' ) ) : ?>
+					<?php if ( function_exists( 'wp_get_abilities' ) ) : ?>
 						<span style="color:#00a32a;">✓ <?php esc_html_e( 'Available', 'webmcp-bridge' ); ?></span>
 					<?php else : ?>
 						<span style="color:#d63638;">✗ <?php esc_html_e( 'Not available', 'webmcp-bridge' ); ?></span>
@@ -224,8 +217,8 @@ class Admin_Page {
 				</li>
 				<li>
 					<?php
-					$count = function_exists( 'wp_get_registered_abilities' )
-						? count( wp_get_registered_abilities() )
+					$count = function_exists( 'wp_get_abilities' )
+						? count( wp_get_abilities() )
 						: 0;
 					printf(
 						/* translators: %d: number of registered abilities */

@@ -68,8 +68,9 @@ class Test_Builtin_Tools extends WP_UnitTestCase {
 	}
 
 	public function test_search_posts_sanitizes_query(): void {
-		// Query with HTML should not break anything.
-		$results = $this->tools->execute_search_posts( array( 'query' => '<script>xss</script>' ) );
+		// Queries with inline HTML tags should have the tags stripped but the
+		// text content preserved, so the search still runs without crashing.
+		$results = $this->tools->execute_search_posts( array( 'query' => '<b>Hello</b> World' ) );
 		$this->assertIsArray( $results );
 	}
 

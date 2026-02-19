@@ -56,9 +56,10 @@ class REST_API {
 		);
 
 		// Tool execution endpoint.
+		// The ability name may contain a namespace separator (e.g. webmcp%2Fget-categories).
 		register_rest_route(
 			self::NAMESPACE,
-			'/execute/(?P<ability>[a-zA-Z0-9_\-\/]+)',
+			'/execute/(?P<ability>[a-zA-Z0-9_%\-]+)',
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'execute_tool' ),
@@ -66,7 +67,9 @@ class REST_API {
 				'args'                => array(
 					'ability' => array(
 						'required'          => true,
-						'sanitize_callback' => 'sanitize_text_field',
+						'sanitize_callback' => static function ( $value ) {
+							return sanitize_text_field( rawurldecode( $value ) );
+						},
 					),
 				),
 			)
@@ -191,26 +194,24 @@ class REST_API {
 		}
 
 		// Get registered abilities.
-		if ( ! function_exists( 'wp_get_registered_abilities' ) ) {
+		if ( ! function_exists( 'wp_get_abilities' ) ) {
 			return new \WP_REST_Response(
 				array( 'code' => 'wmcp_abilities_unavailable', 'message' => __( 'WordPress Abilities API is not available.', 'webmcp-bridge' ) ),
 				500
 			);
 		}
 
-		$abilities = wp_get_registered_abilities();
-
-		if ( ! isset( $abilities[ $ability_name ] ) ) {
+		if ( ! wp_has_ability( $ability_name ) ) {
 			return new \WP_REST_Response(
 				array( 'code' => 'wmcp_not_found', 'message' => __( 'Tool not found.', 'webmcp-bridge' ) ),
 				404
 			);
 		}
 
-		$ability = $abilities[ $ability_name ];
+		$ability = wp_get_ability( $ability_name );
 
-		// Check wmcp_visibility.
-		if ( ( $ability['wmcp_visibility'] ?? 'public' ) === 'private' ) {
+		// Check wmcp_visibility — private abilities are never exposed.
+		if ( 'private' === $ability->get_meta_item( 'wmcp_visibility', 'public' ) ) {
 			return new \WP_REST_Response(
 				array( 'code' => 'wmcp_not_found', 'message' => __( 'Tool not found.', 'webmcp-bridge' ) ),
 				404
@@ -225,14 +226,13 @@ class REST_API {
 			);
 		}
 
-		// Re-check permission_callback at execution time.
-		if ( ! empty( $ability['permission_callback'] ) && is_callable( $ability['permission_callback'] ) ) {
-			if ( ! call_user_func( $ability['permission_callback'] ) ) {
-				return new \WP_REST_Response(
-					array( 'code' => 'wmcp_forbidden', 'message' => __( 'You do not have permission to use this tool.', 'webmcp-bridge' ) ),
-					403
-				);
-			}
+		// Re-check permissions at execution time.
+		$permission = $ability->check_permissions( $input ?? null );
+		if ( true !== $permission ) {
+			return new \WP_REST_Response(
+				array( 'code' => 'wmcp_forbidden', 'message' => __( 'You do not have permission to use this tool.', 'webmcp-bridge' ) ),
+				403
+			);
 		}
 
 		// Pre-execution filter — last chance to block.
@@ -270,11 +270,7 @@ class REST_API {
 		$success = false;
 
 		try {
-			if ( ! empty( $ability['execute_callback'] ) && is_callable( $ability['execute_callback'] ) ) {
-				$result = call_user_func( $ability['execute_callback'], $input );
-			} else {
-				$result = new \WP_Error( 'wmcp_no_callback', __( 'This ability has no execute callback.', 'webmcp-bridge' ) );
-			}
+			$result = $ability->execute( $input );
 
 			if ( is_wp_error( $result ) ) {
 				// Log only the error code, not the message (may contain PII).

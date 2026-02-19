@@ -50,7 +50,8 @@ class Plugin {
 	}
 
 	private function register_hooks(): void {
-		// Register built-in tools as WordPress Abilities.
+		// Register the WebMCP ability category, then built-in tools.
+		add_action( 'wp_abilities_api_categories_init', array( $this->builtin_tools, 'register_category' ) );
 		add_action( 'wp_abilities_api_init', array( $this->builtin_tools, 'register' ) );
 
 		// Enqueue front-end JS.
