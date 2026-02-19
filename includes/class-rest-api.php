@@ -226,17 +226,17 @@ class REST_API {
 			);
 		}
 
+		// Parse input before permission check so callbacks can inspect it.
+		$input = $request->get_json_params() ?? array();
+
 		// Re-check permissions at execution time.
-		$permission = $ability->check_permissions( $input ?? null );
+		$permission = $ability->check_permissions( $input );
 		if ( true !== $permission ) {
 			return new \WP_REST_Response(
 				array( 'code' => 'wmcp_forbidden', 'message' => __( 'You do not have permission to use this tool.', 'webmcp-bridge' ) ),
 				403
 			);
 		}
-
-		// Pre-execution filter — last chance to block.
-		$input = $request->get_json_params() ?? array();
 
 		/**
 		 * Filter to block execution before it happens.
