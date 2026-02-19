@@ -1,0 +1,28 @@
+<?php
+/**
+ * PHPUnit bootstrap for WebMCP Bridge.
+ *
+ * @package WebMCP_Bridge
+ */
+
+// Path to the WordPress test suite.
+$_tests_dir = getenv( 'WP_TESTS_DIR' );
+
+if ( ! $_tests_dir ) {
+	$_tests_dir = rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress-tests-lib';
+}
+
+if ( ! file_exists( "$_tests_dir/includes/functions.php" ) ) {
+	echo "Could not find WordPress test suite at '$_tests_dir'.\n"; // phpcs:ignore WordPress.Security.EscapeOutput
+	echo "Run: composer require --dev wp-phpunit/wp-phpunit\n"; // phpcs:ignore WordPress.Security.EscapeOutput
+	exit( 1 );
+}
+
+// Load the plugin.
+$_plugin_dir = dirname( __DIR__, 2 );
+
+tests_add_filter( 'muplugins_loaded', function () use ( $_plugin_dir ) {
+	require_once "$_plugin_dir/webmcp-bridge.php";
+} );
+
+require_once "$_tests_dir/includes/bootstrap.php";
