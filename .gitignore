@@ -1,0 +1,35 @@
+# Dependencies
+/node_modules/
+/vendor/
+
+# Built assets (committed separately or excluded from VCS)
+/assets/js/build/
+
+# WordPress test suite (installed locally via composer)
+/tests/wordpress-tests-lib/
+/tmp/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Composer lock (include for plugins, exclude for libraries)
+# composer.lock is intentionally tracked
+
+# npm
+package-lock.json
+
+# PHPUnit cache
+.phpunit.result.cache
+.phpunit.cache/

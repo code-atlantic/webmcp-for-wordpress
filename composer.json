@@ -1,0 +1,27 @@
+{
+  "name": "code-atlantic/webmcp-bridge",
+  "description": "Bridges WordPress Abilities to the WebMCP browser API (navigator.modelContext)",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "php": ">=8.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.0 || ^10.0",
+    "wp-phpunit/wp-phpunit": "^6.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "WebMCP_Bridge\\": "includes/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit",
+    "lint": "phpcs --standard=WordPress includes/ webmcp-bridge.php"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  }
+}
