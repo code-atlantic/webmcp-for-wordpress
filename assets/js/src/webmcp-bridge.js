@@ -133,27 +133,31 @@
 	// Auto-retries once on 403 (expired nonce).
 	// -------------------------------------------------------------------------
 
-	async function executeTool( toolName, input ) {
+	async function executeTool( toolName, input, readOnly = false ) {
 		const url = executeEndpoint + encodeURIComponent( toolName );
 
-		async function doRequest() {
+		async function doRequest( nonce ) {
+			const headers = { 'Content-Type': 'application/json' };
+			// Read-only tools skip the nonce — WP core would reject a stale nonce
+			// with 403 before our permission check runs, and the server doesn't
+			// require it for read-only tools anyway.
+			if ( ! readOnly && nonce ) {
+				headers[ 'X-WP-Nonce' ] = nonce;
+			}
 			return fetch( url, {
 				method:      'POST',
 				credentials: 'same-origin',
-				headers:     {
-					'Content-Type': 'application/json',
-					'X-WP-Nonce':   currentNonce,
-				},
+				headers,
 				body: JSON.stringify( input ),
 			} );
 		}
 
-		let response = await doRequest();
+		let response = await doRequest( currentNonce );
 
-		// On 403, refresh the nonce and retry once.
-		if ( response.status === 403 ) {
+		// On 403 for write tools, refresh the nonce and retry once.
+		if ( ! readOnly && response.status === 403 ) {
 			await refreshNonce();
-			response = await doRequest();
+			response = await doRequest( currentNonce );
 		}
 
 		if ( ! response.ok ) {
@@ -203,7 +207,7 @@
 					name:        safeName,
 					description: tool.description,
 					inputSchema: tool.inputSchema ?? { type: 'object', properties: {} },
-					execute:     async ( input /*, client */ ) => executeTool( tool.name, input ),
+					execute:     async ( input /*, client */ ) => executeTool( tool.name, input, !! tool.annotations?.readOnlyHint ),
 				};
 				if ( tool.annotations ) {
 					entry.annotations = tool.annotations;
