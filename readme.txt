@@ -97,6 +97,10 @@ Yes — they are complementary. Built-in tools are registered as real WordPress 
 
 This feature (which allows agents to discover tools before visiting the page) is planned for a future release. In the current version, agents discover tools when they load a page on your site.
 
+== Screenshots ==
+
+1. The WebMCP Abilities settings page — enable the bridge, control tool discovery, and manage which tools are exposed to AI agents.
+
 == Changelog ==
 
 = 0.6.0 =
