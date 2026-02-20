@@ -55,7 +55,7 @@ class Settings {
 	}
 
 	/**
-	 * Whether WebMCP for WordPress is globally enabled.
+	 * Whether WebMCP Abilities is globally enabled.
 	 * Defaults to true on fresh installs — the plugin does nothing harmful
 	 * when enabled and "install and it works" is the right first-run experience.
 	 */

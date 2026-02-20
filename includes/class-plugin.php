@@ -115,7 +115,7 @@ class Plugin {
 	}
 
 	/**
-	 * Enqueue the WebMCP for WordPress front-end script.
+	 * Enqueue the WebMCP Abilities front-end script.
 	 */
 	public function enqueue_frontend(): void {
 		// Only load when enabled and on HTTPS.
@@ -128,7 +128,7 @@ class Plugin {
 			return;
 		}
 
-		$asset_file = WMCP_PLUGIN_DIR . 'dist/webmcp-for-wordpress.asset.php';
+		$asset_file = WMCP_PLUGIN_DIR . 'dist/webmcp-abilities.asset.php';
 		$asset      = file_exists( $asset_file )
 			? require $asset_file
 			: [
@@ -137,8 +137,8 @@ class Plugin {
 			];
 
 		wp_enqueue_script(
-			'webmcp-for-wordpress',
-			WMCP_PLUGIN_URL . 'dist/webmcp-for-wordpress.js',
+			'webmcp-abilities',
+			WMCP_PLUGIN_URL . 'dist/webmcp-abilities.js',
 			$asset['dependencies'],
 			$asset['version'],
 			[ 'strategy' => 'defer' ]
@@ -146,7 +146,7 @@ class Plugin {
 
 		// Pass configuration to the script.
 		wp_localize_script(
-			'webmcp-for-wordpress',
+			'webmcp-abilities',
 			'wmcpBridge',
 			[
 				'toolsEndpoint'   => rest_url( 'webmcp/v1/tools' ),

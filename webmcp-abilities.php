@@ -1,17 +1,17 @@
 <?php
 /**
- * Plugin Name: WebMCP for WordPress
- * Plugin URI:  https://github.com/code-atlantic/webmcp-for-wordpress
+ * Plugin Name: WebMCP Abilities for WordPress
+ * Plugin URI:  https://github.com/code-atlantic/webmcp-abilities
  * Description: Bridges WordPress Abilities to the WebMCP browser API (navigator.modelContext), making any WordPress site's capabilities discoverable and invocable by AI agents in Chrome 146+.
- * Version:     0.5.0
+ * Version:     0.6.0
  * Author:      Code Atlantic
  * Author URI:  https://code-atlantic.com
  * License:     GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: webmcp-for-wordpress
+ * Text Domain: webmcp-abilities
  * Requires PHP: 8.0
  * Requires at least: 6.9
- * GitHub Plugin URI: https://github.com/code-atlantic/webmcp-for-wordpress
+ * GitHub Plugin URI: https://github.com/code-atlantic/webmcp-abilities
  * Primary Branch:    main
  * Release Asset:     true
  *
@@ -20,7 +20,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WMCP_VERSION', '0.5.0' );
+define( 'WMCP_VERSION', '0.6.0' );
 define( 'WMCP_PLUGIN_FILE', __FILE__ );
 define( 'WMCP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WMCP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -39,10 +39,10 @@ function wmcp_activation_check(): void {
 		wp_die(
 			sprintf(
 				/* translators: %s: Required WordPress version */
-				esc_html__( 'WebMCP for WordPress requires WordPress %s or higher. Please update WordPress and try again.', 'webmcp-for-wordpress' ),
+				esc_html__( 'WebMCP Abilities requires WordPress %s or higher. Please update WordPress and try again.', 'webmcp-abilities' ),
 				'6.9'
 			),
-			esc_html__( 'Plugin Activation Error', 'webmcp-for-wordpress' ),
+			esc_html__( 'Plugin Activation Error', 'webmcp-abilities' ),
 			[ 'back_link' => true ]
 		);
 	}
@@ -50,8 +50,8 @@ function wmcp_activation_check(): void {
 	if ( ! function_exists( 'wp_register_ability' ) ) {
 		deactivate_plugins( plugin_basename( __FILE__ ) );
 		wp_die(
-			esc_html__( 'WebMCP for WordPress requires the WordPress Abilities API. Please ensure you are running WordPress 6.9 or higher with the Abilities API available.', 'webmcp-for-wordpress' ),
-			esc_html__( 'Plugin Activation Error', 'webmcp-for-wordpress' ),
+			esc_html__( 'WebMCP Abilities requires the WordPress Abilities API. Please ensure you are running WordPress 6.9 or higher with the Abilities API available.', 'webmcp-abilities' ),
+			esc_html__( 'Plugin Activation Error', 'webmcp-abilities' ),
 			[ 'back_link' => true ]
 		);
 	}
@@ -93,7 +93,7 @@ function wmcp_incompatible_notice(): void {
 	?>
 	<div class="notice notice-error">
 		<p>
-			<?php esc_html_e( 'WebMCP for WordPress requires WordPress 6.9 or higher. The plugin is currently inactive.', 'webmcp-for-wordpress' ); ?>
+			<?php esc_html_e( 'WebMCP Abilities requires WordPress 6.9 or higher. The plugin is currently inactive.', 'webmcp-abilities' ); ?>
 		</p>
 	</div>
 	<?php

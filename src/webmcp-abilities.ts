@@ -1,5 +1,5 @@
 /**
- * WebMCP for WordPress — front-end imperative tool registration.
+ * WebMCP Abilities — front-end imperative tool registration.
  *
  * Fetches registered WordPress Abilities from the REST API and registers
  * each one as a WebMCP tool via navigator.modelContext, making them available
@@ -194,7 +194,7 @@ interface ToolsResponse {
 			} catch {
 				/* non-JSON body — use status code */
 			}
-			throw new Error( `WebMCP for WordPress: ${ errorMessage }` );
+			throw new Error( `WebMCP Abilities: ${ errorMessage }` );
 		}
 
 		const data = ( await response.json() ) as { result: unknown };

@@ -1,4 +1,4 @@
-# WebMCP for WordPress
+# WebMCP Abilities for WordPress
 
 [![WordPress](https://img.shields.io/badge/WordPress-6.9%2B-21759B?logo=wordpress&logoColor=white)](https://wordpress.org)
 [![PHP](https://img.shields.io/badge/PHP-8.0%2B-777BB4?logo=php&logoColor=white)](https://php.net)
@@ -9,11 +9,11 @@
 
 **Turn any WordPress site into a structured tool server for AI agents** — no custom API, no scraping, no prompt engineering required.
 
-WebMCP for WordPress connects the [WordPress Abilities API](https://developer.wordpress.org/apis/abilities-api/) to the [WebMCP browser standard](https://webmachinelearning.github.io/webmcp/), so AI agents running in Chrome 146+ can discover and call your site's capabilities as reliable, schema-driven tools.
+WebMCP Abilities connects the [WordPress Abilities API](https://developer.wordpress.org/apis/abilities-api/) to the [WebMCP browser standard](https://webmachinelearning.github.io/webmcp/), so AI agents running in Chrome 146+ can discover and call your site's capabilities as reliable, schema-driven tools.
 
 ### Demo
 
-[![WebMCP for WordPress Demo](https://img.youtube.com/vi/7A34ZNz2bMM/maxresdefault.jpg)](https://youtu.be/7A34ZNz2bMM)
+[![WebMCP Abilities Demo](https://img.youtube.com/vi/7A34ZNz2bMM/maxresdefault.jpg)](https://youtu.be/7A34ZNz2bMM)
 
 > Gemini 2.5 Flash discovering and calling WordPress tools via Chrome's `navigator.modelContext` API on a live production site.
 
@@ -93,12 +93,12 @@ add_filter( 'wmcp_include_builtin_tools', '__return_false' );
 ### From Source
 
 ```bash
-git clone https://github.com/code-atlantic/webmcp-for-wordpress.git
-cd webmcp-for-wordpress
+git clone https://github.com/code-atlantic/webmcp-abilities.git
+cd webmcp-abilities
 composer install --no-dev
 ```
 
-Upload to `wp-content/plugins/webmcp-for-wordpress/` and activate.
+Upload to `wp-content/plugins/webmcp-abilities/` and activate.
 
 ---
 
@@ -130,7 +130,7 @@ add_action( 'wp_abilities_api_init', function () {
 } );
 ```
 
-WebMCP for WordPress automatically picks up any registered ability and exposes it — no extra configuration needed.
+WebMCP Abilities automatically picks up any registered ability and exposes it — no extra configuration needed.
 
 ### Visibility Control
 
@@ -231,7 +231,7 @@ npx wp-env start
 
 # Run the suite
 npx wp-env run tests-cli \
-  "bash -c 'cd /var/www/html/wp-content/plugins/webmcp-for-wordpress && WP_TESTS_DIR=/wordpress-phpunit ./vendor/bin/phpunit'"
+  "bash -c 'cd /var/www/html/wp-content/plugins/webmcp-abilities && WP_TESTS_DIR=/wordpress-phpunit ./vendor/bin/phpunit'"
 ```
 
 Test coverage:
@@ -245,8 +245,8 @@ Test coverage:
 ## Architecture
 
 ```
-webmcp-for-wordpress/
-├── webmcp-for-wordpress.php          # Bootstrap, version guard
+webmcp-abilities/
+├── webmcp-abilities.php          # Bootstrap, version guard
 ├── includes/
 │   ├── class-plugin.php       # Singleton wiring
 │   ├── class-settings.php     # Options: enabled, discovery, exposed list
@@ -256,11 +256,11 @@ webmcp-for-wordpress/
 │   ├── class-rate-limiter.php # Transient-based rate limiting
 │   └── class-admin-page.php   # Settings UI
 ├── src/
-│   ├── webmcp-for-wordpress.ts       # TypeScript source (navigator.modelContext bridge)
+│   ├── webmcp-abilities.ts       # TypeScript source (navigator.modelContext bridge)
 │   └── types/webmcp.d.ts             # WebMCP type declarations
 ├── dist/                             # Built output (@wordpress/scripts + webpack)
-│   ├── webmcp-for-wordpress.js       # Compiled bundle
-│   └── webmcp-for-wordpress.asset.php # WP dependency manifest with version hash
+│   ├── webmcp-abilities.js       # Compiled bundle
+│   └── webmcp-abilities.asset.php # WP dependency manifest with version hash
 └── tests/phpunit/             # 51 integration tests
 ```
 
