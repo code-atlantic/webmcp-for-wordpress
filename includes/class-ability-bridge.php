@@ -144,16 +144,24 @@ class Ability_Bridge {
 	 * @return array Validated schema, or empty-object schema on failure.
 	 */
 	public function validate_schema( array $schema ): array {
+		// Cast properties to stdClass so JSON encodes as {} not [].
+		$empty = array( 'type' => 'object', 'properties' => new \stdClass() );
+
 		if ( empty( $schema ) ) {
-			return array( 'type' => 'object', 'properties' => array() );
+			return $empty;
 		}
 
 		if ( $this->schema_depth( $schema ) > 5 ) {
-			return array( 'type' => 'object', 'properties' => array() );
+			return $empty;
 		}
 
 		if ( $this->schema_has_ref( $schema ) ) {
-			return array( 'type' => 'object', 'properties' => array() );
+			return $empty;
+		}
+
+		// Ensure any 'properties' key in the schema is also an object, not array.
+		if ( isset( $schema['properties'] ) && is_array( $schema['properties'] ) && empty( $schema['properties'] ) ) {
+			$schema['properties'] = new \stdClass();
 		}
 
 		return $schema;
