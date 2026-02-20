@@ -10,7 +10,7 @@ namespace WebMCP;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Registers and handles the three WebMCP Bridge REST endpoints:
+ * Registers and handles the three WebMCP for WordPress REST endpoints:
  *   GET  /wp-json/webmcp/v1/tools
  *   POST /wp-json/webmcp/v1/execute/{ability-name}
  *   GET  /wp-json/webmcp/v1/nonce
@@ -97,7 +97,7 @@ class REST_API {
 	 */
 	public function tools_permission_check( \WP_REST_Request $request ): bool|\WP_Error {
 		if ( ! $this->settings->is_enabled() ) {
-			return new \WP_Error( 'wmcp_disabled', __( 'WebMCP Bridge is not enabled.', 'webmcp-for-wordpress' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'wmcp_disabled', __( 'WebMCP for WordPress is not enabled.', 'webmcp-for-wordpress' ), array( 'status' => 404 ) );
 		}
 
 		// Rate-limit discovery by IP.
@@ -162,7 +162,7 @@ class REST_API {
 	 */
 	public function execute_permission_check( \WP_REST_Request $request ): bool|\WP_Error {
 		if ( ! $this->settings->is_enabled() ) {
-			return new \WP_Error( 'wmcp_disabled', __( 'WebMCP Bridge is not enabled.', 'webmcp-for-wordpress' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'wmcp_disabled', __( 'WebMCP for WordPress is not enabled.', 'webmcp-for-wordpress' ), array( 'status' => 404 ) );
 		}
 
 		return true;

@@ -64,7 +64,7 @@ class Admin_Page {
 		?>
 		<div class="notice notice-error">
 			<p>
-				<strong><?php esc_html_e( 'WebMCP Bridge: HTTPS required.', 'webmcp-for-wordpress' ); ?></strong>
+				<strong><?php esc_html_e( 'WebMCP for WordPress: HTTPS required.', 'webmcp-for-wordpress' ); ?></strong>
 				<?php esc_html_e( 'Your site is not served over HTTPS. The WebMCP standard requires a secure context — the front-end bridge will not load until HTTPS is enabled.', 'webmcp-for-wordpress' ); ?>
 			</p>
 		</div>
@@ -108,7 +108,7 @@ class Admin_Page {
 					<tr>
 						<th scope="row">
 							<label for="wmcp_enabled">
-								<?php esc_html_e( 'Enable WebMCP Bridge', 'webmcp-for-wordpress' ); ?>
+								<?php esc_html_e( 'Enable WebMCP for WordPress', 'webmcp-for-wordpress' ); ?>
 							</label>
 						</th>
 						<td>

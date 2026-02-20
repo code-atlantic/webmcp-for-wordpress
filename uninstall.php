@@ -2,7 +2,7 @@
 /**
  * Plugin uninstall cleanup.
  *
- * Removes all options, transients, and object cache keys created by WebMCP Bridge.
+ * Removes all options, transients, and object cache keys created by WebMCP for WordPress.
  *
  * @package WebMCP
  */

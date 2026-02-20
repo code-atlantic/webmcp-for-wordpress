@@ -80,7 +80,7 @@ class Plugin {
 	}
 
 	/**
-	 * Enqueue the WebMCP Bridge front-end script.
+	 * Enqueue the WebMCP for WordPress front-end script.
 	 */
 	public function enqueue_frontend(): void {
 		// Only load when enabled and on HTTPS.

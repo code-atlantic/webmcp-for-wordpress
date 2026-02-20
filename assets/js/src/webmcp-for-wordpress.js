@@ -1,5 +1,5 @@
 /**
- * WebMCP Bridge — front-end imperative tool registration.
+ * WebMCP for WordPress — front-end imperative tool registration.
  *
  * Fetches registered WordPress Abilities from the REST API and registers
  * each one as a WebMCP tool via navigator.modelContext, making them available
@@ -166,7 +166,7 @@
 				const errData = await response.json();
 				errorMessage = errData.message ?? errorMessage;
 			} catch { /* non-JSON body — use status code */ }
-			throw new Error( `WebMCP Bridge: ${ errorMessage }` );
+			throw new Error( `WebMCP for WordPress: ${ errorMessage }` );
 		}
 
 		const data = await response.json();

@@ -39,7 +39,7 @@ function wmcp_activation_check(): void {
 		wp_die(
 			sprintf(
 				/* translators: %s: Required WordPress version */
-				esc_html__( 'WebMCP Bridge requires WordPress %s or higher. Please update WordPress and try again.', 'webmcp-for-wordpress' ),
+				esc_html__( 'WebMCP for WordPress requires WordPress %s or higher. Please update WordPress and try again.', 'webmcp-for-wordpress' ),
 				'6.9'
 			),
 			esc_html__( 'Plugin Activation Error', 'webmcp-for-wordpress' ),
@@ -50,7 +50,7 @@ function wmcp_activation_check(): void {
 	if ( ! function_exists( 'wp_register_ability' ) ) {
 		deactivate_plugins( plugin_basename( __FILE__ ) );
 		wp_die(
-			esc_html__( 'WebMCP Bridge requires the WordPress Abilities API. Please ensure you are running WordPress 6.9 or higher with the Abilities API available.', 'webmcp-for-wordpress' ),
+			esc_html__( 'WebMCP for WordPress requires the WordPress Abilities API. Please ensure you are running WordPress 6.9 or higher with the Abilities API available.', 'webmcp-for-wordpress' ),
 			esc_html__( 'Plugin Activation Error', 'webmcp-for-wordpress' ),
 			array( 'back_link' => true )
 		);
@@ -93,7 +93,7 @@ function wmcp_incompatible_notice(): void {
 	?>
 	<div class="notice notice-error">
 		<p>
-			<?php esc_html_e( 'WebMCP Bridge requires WordPress 6.9 or higher. The plugin is currently inactive.', 'webmcp-for-wordpress' ); ?>
+			<?php esc_html_e( 'WebMCP for WordPress requires WordPress 6.9 or higher. The plugin is currently inactive.', 'webmcp-for-wordpress' ); ?>
 		</p>
 	</div>
 	<?php

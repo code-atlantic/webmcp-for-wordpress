@@ -1,6 +1,6 @@
 <?php
 /**
- * PHPUnit bootstrap for WebMCP Bridge.
+ * PHPUnit bootstrap for WebMCP for WordPress.
  *
  * @package WebMCP
  */

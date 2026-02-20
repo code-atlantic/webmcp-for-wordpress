@@ -22,7 +22,7 @@ class Test_Builtin_Tools extends WP_UnitTestCase {
 		// Create a test post.
 		$this->post_id = self::factory()->post->create( array(
 			'post_title'   => 'Hello World',
-			'post_content' => 'This is test content for WebMCP Bridge.',
+			'post_content' => 'This is test content for WebMCP for WordPress.',
 			'post_status'  => 'publish',
 			'post_name'    => 'hello-world',
 		) );

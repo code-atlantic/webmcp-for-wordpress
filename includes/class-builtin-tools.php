@@ -1,6 +1,6 @@
 <?php
 /**
- * Built-in starter tools for WebMCP Bridge.
+ * Built-in starter tools for WebMCP for WordPress.
  *
  * Registers four practical tools as real WordPress Abilities so they work with
  * both the WebMCP browser API and the MCP Adapter (CLI/API agents).
