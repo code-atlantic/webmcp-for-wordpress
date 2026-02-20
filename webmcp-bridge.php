@@ -3,7 +3,7 @@
  * Plugin Name: WebMCP Bridge
  * Plugin URI:  https://github.com/code-atlantic/webmcp-bridge
  * Description: Bridges WordPress Abilities to the WebMCP browser API (navigator.modelContext), making any WordPress site's capabilities discoverable and invocable by AI agents in Chrome 146+.
- * Version:     0.2.1
+ * Version:     0.2.2
  * Author:      Code Atlantic
  * Author URI:  https://code-atlantic.com
  * License:     GPL-2.0-or-later
@@ -11,13 +11,17 @@
  * Text Domain: webmcp-bridge
  * Requires PHP: 8.0
  * Requires at least: 6.9
+ * GitHub Plugin URI: code-atlantic/webmcp-bridge
+ * GitHub Branch:     main
+ * Primary Branch:    main
+ * Release Asset:     true
  *
  * @package WebMCP_Bridge
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WMCP_VERSION', '0.2.1' );
+define( 'WMCP_VERSION', '0.2.2' );
 define( 'WMCP_PLUGIN_FILE', __FILE__ );
 define( 'WMCP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WMCP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
