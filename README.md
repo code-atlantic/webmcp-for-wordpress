@@ -9,7 +9,7 @@
 
 **Turn any WordPress site into a structured tool server for AI agents** — no custom API, no scraping, no prompt engineering required.
 
-> **First WordPress plugin to bridge the Abilities API to Chrome's WebMCP standard.** Live in production on [wppopupmaker.com](https://wppopupmaker.com) — the first WordPress site running WebMCP.
+> Already running in production on [wppopupmaker.com](https://wppopupmaker.com). See the [WordPress core WebMCP experiment](https://github.com/WordPress/ai/pull/224) for where this is heading.
 
 **[Product Page](https://code-atlantic.com/products/webmcp-abilities-for-wordpress/)** · **[GitHub](https://github.com/code-atlantic/webmcp-abilities)** · **[WordPress.org](https://wordpress.org/plugins/webmcp-abilities/)** *(pending review)*
 
