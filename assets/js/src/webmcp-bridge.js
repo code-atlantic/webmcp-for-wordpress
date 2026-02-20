@@ -166,9 +166,10 @@
 
 		const data = await response.json();
 
-		// Return the raw result — WebMCP spec execute() returns Promise<any>;
-		// the browser passes the value directly to the agent.
-		return data.result;
+		// Chrome's WebMCP implementation expects the MCP content-array format.
+		return {
+			content: [ { type: 'text', text: JSON.stringify( data.result ) } ],
+		};
 	}
 
 	// -------------------------------------------------------------------------
