@@ -11,8 +11,7 @@
  * Text Domain: webmcp-bridge
  * Requires PHP: 8.0
  * Requires at least: 6.9
- * GitHub Plugin URI: code-atlantic/webmcp-bridge
- * GitHub Branch:     main
+ * GitHub Plugin URI: https://github.com/code-atlantic/webmcp-bridge
  * Primary Branch:    main
  * Release Asset:     true
  *
