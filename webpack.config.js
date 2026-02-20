@@ -4,9 +4,9 @@ const path = require( 'path' );
 module.exports = {
 	...defaultConfig,
 	entry: {
-		'webmcp-for-wordpress': path.resolve(
+		'webmcp-abilities': path.resolve(
 			__dirname,
-			'src/webmcp-for-wordpress.ts'
+			'src/webmcp-abilities.ts'
 		),
 	},
 	output: {

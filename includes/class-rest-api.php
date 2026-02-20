@@ -10,7 +10,7 @@ namespace WebMCP;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Registers and handles the three WebMCP for WordPress REST endpoints:
+ * Registers and handles the three WebMCP Abilities REST endpoints:
  *   GET  /wp-json/webmcp/v1/tools
  *   POST /wp-json/webmcp/v1/execute/{ability-name}
  *   GET  /wp-json/webmcp/v1/nonce
@@ -118,7 +118,7 @@ class REST_API {
 	 */
 	public function tools_permission_check( \WP_REST_Request $request ): bool|\WP_Error { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- Required by REST API signature.
 		if ( ! $this->settings->is_enabled() ) {
-			return new \WP_Error( 'wmcp_disabled', __( 'WebMCP for WordPress is not enabled.', 'webmcp-for-wordpress' ), [ 'status' => 404 ] );
+			return new \WP_Error( 'wmcp_disabled', __( 'WebMCP Abilities is not enabled.', 'webmcp-abilities' ), [ 'status' => 404 ] );
 		}
 
 		// Rate-limit discovery by IP.
@@ -126,7 +126,7 @@ class REST_API {
 		if ( ! $this->rate_limiter->check_discovery( $ip ) ) {
 			return new \WP_Error(
 				'wmcp_rate_limited',
-				__( 'Too many requests. Please slow down.', 'webmcp-for-wordpress' ),
+				__( 'Too many requests. Please slow down.', 'webmcp-abilities' ),
 				[ 'status' => 429 ]
 			);
 		}
@@ -138,7 +138,7 @@ class REST_API {
 
 		// Otherwise require authentication.
 		if ( ! is_user_logged_in() ) {
-			return new \WP_Error( 'wmcp_auth_required', __( 'Authentication required.', 'webmcp-for-wordpress' ), [ 'status' => 401 ] );
+			return new \WP_Error( 'wmcp_auth_required', __( 'Authentication required.', 'webmcp-abilities' ), [ 'status' => 401 ] );
 		}
 
 		return true;
@@ -187,7 +187,7 @@ class REST_API {
 	 */
 	public function execute_permission_check( \WP_REST_Request $request ): bool|\WP_Error { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- Required by REST API signature.
 		if ( ! $this->settings->is_enabled() ) {
-			return new \WP_Error( 'wmcp_disabled', __( 'WebMCP for WordPress is not enabled.', 'webmcp-for-wordpress' ), [ 'status' => 404 ] );
+			return new \WP_Error( 'wmcp_disabled', __( 'WebMCP Abilities is not enabled.', 'webmcp-abilities' ), [ 'status' => 404 ] );
 		}
 
 		return true;
@@ -208,7 +208,7 @@ class REST_API {
 			return new \WP_REST_Response(
 				[
 					'code'    => 'wmcp_payload_too_large',
-					'message' => __( 'Request payload exceeds the maximum allowed size.', 'webmcp-for-wordpress' ),
+					'message' => __( 'Request payload exceeds the maximum allowed size.', 'webmcp-abilities' ),
 				],
 				400
 			);
@@ -219,7 +219,7 @@ class REST_API {
 			return new \WP_REST_Response(
 				[
 					'code'    => 'wmcp_abilities_unavailable',
-					'message' => __( 'WordPress Abilities API is not available.', 'webmcp-for-wordpress' ),
+					'message' => __( 'WordPress Abilities API is not available.', 'webmcp-abilities' ),
 				],
 				500
 			);
@@ -229,7 +229,7 @@ class REST_API {
 			return new \WP_REST_Response(
 				[
 					'code'    => 'wmcp_not_found',
-					'message' => __( 'Tool not found.', 'webmcp-for-wordpress' ),
+					'message' => __( 'Tool not found.', 'webmcp-abilities' ),
 				],
 				404
 			);
@@ -242,7 +242,7 @@ class REST_API {
 			return new \WP_REST_Response(
 				[
 					'code'    => 'wmcp_not_found',
-					'message' => __( 'Tool not found.', 'webmcp-for-wordpress' ),
+					'message' => __( 'Tool not found.', 'webmcp-abilities' ),
 				],
 				404
 			);
@@ -253,7 +253,7 @@ class REST_API {
 			return new \WP_REST_Response(
 				[
 					'code'    => 'wmcp_not_found',
-					'message' => __( 'Tool not found.', 'webmcp-for-wordpress' ),
+					'message' => __( 'Tool not found.', 'webmcp-abilities' ),
 				],
 				404
 			);
@@ -268,7 +268,7 @@ class REST_API {
 			return new \WP_REST_Response(
 				[
 					'code'    => 'wmcp_forbidden',
-					'message' => __( 'You do not have permission to use this tool.', 'webmcp-for-wordpress' ),
+					'message' => __( 'You do not have permission to use this tool.', 'webmcp-abilities' ),
 				],
 				403
 			);
@@ -283,7 +283,7 @@ class REST_API {
 				return new \WP_REST_Response(
 					[
 						'code'    => 'wmcp_invalid_nonce',
-						'message' => __( 'Invalid or expired security token.', 'webmcp-for-wordpress' ),
+						'message' => __( 'Invalid or expired security token.', 'webmcp-abilities' ),
 					],
 					403
 				);
@@ -315,7 +315,7 @@ class REST_API {
 			$response = new \WP_REST_Response(
 				[
 					'code'    => 'wmcp_rate_limited',
-					'message' => __( 'Rate limit exceeded. Please wait before making more requests.', 'webmcp-for-wordpress' ),
+					'message' => __( 'Rate limit exceeded. Please wait before making more requests.', 'webmcp-abilities' ),
 				],
 				429
 			);
@@ -350,7 +350,7 @@ class REST_API {
 			return new \WP_REST_Response(
 				[
 					'code'    => 'wmcp_execution_error',
-					'message' => __( 'Tool execution failed.', 'webmcp-for-wordpress' ),
+					'message' => __( 'Tool execution failed.', 'webmcp-abilities' ),
 				],
 				500
 			);

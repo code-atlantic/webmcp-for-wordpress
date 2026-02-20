@@ -1,6 +1,6 @@
 <?php
 /**
- * PHPUnit bootstrap for WebMCP for WordPress.
+ * PHPUnit bootstrap for WebMCP Abilities.
  *
  * @package WebMCP
  */
@@ -30,7 +30,7 @@ require_once "$_tests_dir/includes/functions.php";
 $_plugin_dir = dirname( __DIR__, 2 ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Test bootstrap.
 
 tests_add_filter( 'muplugins_loaded', function () use ( $_plugin_dir ) {
-	require_once "$_plugin_dir/webmcp-for-wordpress.php";
+	require_once "$_plugin_dir/webmcp-abilities.php";
 } );
 
 require_once "$_tests_dir/includes/bootstrap.php";

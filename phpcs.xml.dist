@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="WebMCP for WordPress">
-	<description>Coding standards for WebMCP for WordPress plugin.</description>
+<ruleset name="WebMCP Abilities">
+	<description>Coding standards for WebMCP Abilities plugin.</description>
 
 	<file>.</file>
 
@@ -13,7 +13,7 @@
 	<exclude-pattern>dist/</exclude-pattern>
 
 	<!-- Set required text domain -->
-	<config name="text_domain" value="webmcp-for-wordpress" />
+	<config name="text_domain" value="webmcp-abilities" />
 
 	<!-- PHP 8.0 and higher -->
 	<config name="testVersion" value="8.0-" />

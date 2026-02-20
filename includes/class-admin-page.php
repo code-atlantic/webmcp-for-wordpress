@@ -53,10 +53,10 @@ class Admin_Page {
 	 */
 	public function add_menu_page(): void {
 		add_options_page(
-			__( 'WebMCP for WordPress', 'webmcp-for-wordpress' ),
-			__( 'WebMCP', 'webmcp-for-wordpress' ),
+			__( 'WebMCP Abilities for WordPress', 'webmcp-abilities' ),
+			__( 'WebMCP', 'webmcp-abilities' ),
 			'manage_options',
-			'webmcp-for-wordpress',
+			'webmcp-abilities',
 			[ $this, 'render_page' ]
 		);
 	}
@@ -71,15 +71,15 @@ class Admin_Page {
 		}
 
 		$screen = get_current_screen();
-		if ( ! $screen || 'settings_page_webmcp-for-wordpress' !== $screen->id ) {
+		if ( ! $screen || 'settings_page_webmcp-abilities' !== $screen->id ) {
 			return;
 		}
 
 		?>
 		<div class="notice notice-error">
 			<p>
-				<strong><?php esc_html_e( 'WebMCP for WordPress: HTTPS required.', 'webmcp-for-wordpress' ); ?></strong>
-				<?php esc_html_e( 'Your site is not served over HTTPS. The WebMCP standard requires a secure context — the front-end bridge will not load until HTTPS is enabled.', 'webmcp-for-wordpress' ); ?>
+				<strong><?php esc_html_e( 'WebMCP Abilities: HTTPS required.', 'webmcp-abilities' ); ?></strong>
+				<?php esc_html_e( 'Your site is not served over HTTPS. The WebMCP standard requires a secure context — the front-end bridge will not load until HTTPS is enabled.', 'webmcp-abilities' ); ?>
 			</p>
 		</div>
 		<?php
@@ -104,12 +104,12 @@ class Admin_Page {
 
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'WebMCP for WordPress', 'webmcp-for-wordpress' ); ?></h1>
+			<h1><?php esc_html_e( 'WebMCP Abilities', 'webmcp-abilities' ); ?></h1>
 
 			<p class="description">
-				<?php esc_html_e( 'Allow AI agents visiting your site in Chrome 146+ to discover and use WordPress features as structured tools.', 'webmcp-for-wordpress' ); ?>
+				<?php esc_html_e( 'Allow AI agents visiting your site in Chrome 146+ to discover and use WordPress features as structured tools.', 'webmcp-abilities' ); ?>
 				<?php if ( ! is_ssl() ) : ?>
-					<br><strong style="color:#d63638;"><?php esc_html_e( '⚠ HTTPS is required for WebMCP to work. The front-end bridge is currently disabled.', 'webmcp-for-wordpress' ); ?></strong>
+					<br><strong style="color:#d63638;"><?php esc_html_e( '⚠ HTTPS is required for WebMCP to work. The front-end bridge is currently disabled.', 'webmcp-abilities' ); ?></strong>
 				<?php endif; ?>
 			</p>
 
@@ -122,7 +122,7 @@ class Admin_Page {
 					<tr>
 						<th scope="row">
 							<label for="wmcp_enabled">
-								<?php esc_html_e( 'Enable WebMCP for WordPress', 'webmcp-for-wordpress' ); ?>
+								<?php esc_html_e( 'Enable WebMCP Abilities', 'webmcp-abilities' ); ?>
 							</label>
 						</th>
 						<td>
@@ -132,10 +132,10 @@ class Admin_Page {
 									id="wmcp_enabled"
 									value="1"
 									<?php checked( $is_enabled ); ?>>
-								<?php esc_html_e( 'Allow AI agents to use WordPress features as tools', 'webmcp-for-wordpress' ); ?>
+								<?php esc_html_e( 'Allow AI agents to use WordPress features as tools', 'webmcp-abilities' ); ?>
 							</label>
 							<p class="description">
-								<?php esc_html_e( 'When disabled, no WebMCP tools will be registered in the browser.', 'webmcp-for-wordpress' ); ?>
+								<?php esc_html_e( 'When disabled, no WebMCP tools will be registered in the browser.', 'webmcp-abilities' ); ?>
 							</p>
 						</td>
 					</tr>
@@ -143,7 +143,7 @@ class Admin_Page {
 					<!-- Public discovery toggle -->
 					<tr>
 						<th scope="row">
-							<?php esc_html_e( 'Tool Discovery', 'webmcp-for-wordpress' ); ?>
+							<?php esc_html_e( 'Tool Discovery', 'webmcp-abilities' ); ?>
 						</th>
 						<td>
 							<label>
@@ -152,10 +152,10 @@ class Admin_Page {
 									id="wmcp_discovery_public"
 									value="1"
 									<?php checked( $is_public ); ?>>
-								<?php esc_html_e( 'Allow agents to discover available tools without logging in', 'webmcp-for-wordpress' ); ?>
+								<?php esc_html_e( 'Allow agents to discover available tools without logging in', 'webmcp-abilities' ); ?>
 							</label>
 							<p class="description">
-								<?php esc_html_e( 'When checked, tool names and descriptions are visible to any visitor. Execution still requires the appropriate permissions. Suitable for public content sites, e-commerce, and community forums.', 'webmcp-for-wordpress' ); ?>
+								<?php esc_html_e( 'When checked, tool names and descriptions are visible to any visitor. Execution still requires the appropriate permissions. Suitable for public content sites, e-commerce, and community forums.', 'webmcp-abilities' ); ?>
 							</p>
 						</td>
 					</tr>
@@ -164,11 +164,11 @@ class Admin_Page {
 					<?php if ( ! empty( $all_abilities ) ) : ?>
 					<tr>
 						<th scope="row">
-							<?php esc_html_e( 'Exposed Tools', 'webmcp-for-wordpress' ); ?>
+							<?php esc_html_e( 'Exposed Tools', 'webmcp-abilities' ); ?>
 						</th>
 						<td>
 							<p class="description" style="margin-bottom:8px;">
-								<?php esc_html_e( 'Choose which tools agents can discover and use. Uncheck any tool to hide it completely.', 'webmcp-for-wordpress' ); ?>
+								<?php esc_html_e( 'Choose which tools agents can discover and use. Uncheck any tool to hide it completely.', 'webmcp-abilities' ); ?>
 							</p>
 							<fieldset>
 								<?php
@@ -186,8 +186,8 @@ class Admin_Page {
 
 									// Determine permission label from meta visibility.
 									$perm_label = ( 'public' === $ability->get_meta_item( 'wmcp_visibility', 'public' ) )
-										? __( 'Public', 'webmcp-for-wordpress' )
-										: __( 'Requires login', 'webmcp-for-wordpress' );
+										? __( 'Public', 'webmcp-abilities' )
+										: __( 'Requires login', 'webmcp-abilities' );
 									?>
 									<label style="display:block; margin-bottom:6px;">
 										<input type="checkbox"
@@ -212,22 +212,22 @@ class Admin_Page {
 			</form>
 
 			<hr>
-			<h2><?php esc_html_e( 'Status', 'webmcp-for-wordpress' ); ?></h2>
+			<h2><?php esc_html_e( 'Status', 'webmcp-abilities' ); ?></h2>
 			<ul>
 				<li>
-					<?php esc_html_e( 'HTTPS:', 'webmcp-for-wordpress' ); ?>
+					<?php esc_html_e( 'HTTPS:', 'webmcp-abilities' ); ?>
 					<?php if ( is_ssl() ) : ?>
-						<span style="color:#00a32a;">✓ <?php esc_html_e( 'Enabled', 'webmcp-for-wordpress' ); ?></span>
+						<span style="color:#00a32a;">✓ <?php esc_html_e( 'Enabled', 'webmcp-abilities' ); ?></span>
 					<?php else : ?>
-						<span style="color:#d63638;">✗ <?php esc_html_e( 'Not enabled — WebMCP will not work', 'webmcp-for-wordpress' ); ?></span>
+						<span style="color:#d63638;">✗ <?php esc_html_e( 'Not enabled — WebMCP will not work', 'webmcp-abilities' ); ?></span>
 					<?php endif; ?>
 				</li>
 				<li>
-					<?php esc_html_e( 'WordPress Abilities API:', 'webmcp-for-wordpress' ); ?>
+					<?php esc_html_e( 'WordPress Abilities API:', 'webmcp-abilities' ); ?>
 					<?php if ( function_exists( 'wp_get_abilities' ) ) : ?>
-						<span style="color:#00a32a;">✓ <?php esc_html_e( 'Available', 'webmcp-for-wordpress' ); ?></span>
+						<span style="color:#00a32a;">✓ <?php esc_html_e( 'Available', 'webmcp-abilities' ); ?></span>
 					<?php else : ?>
-						<span style="color:#d63638;">✗ <?php esc_html_e( 'Not available', 'webmcp-for-wordpress' ); ?></span>
+						<span style="color:#d63638;">✗ <?php esc_html_e( 'Not available', 'webmcp-abilities' ); ?></span>
 					<?php endif; ?>
 				</li>
 				<li>
@@ -237,19 +237,19 @@ class Admin_Page {
 						: 0;
 					printf(
 						/* translators: %d: number of registered abilities */
-						esc_html__( 'Registered abilities: %d', 'webmcp-for-wordpress' ),
+						esc_html__( 'Registered abilities: %d', 'webmcp-abilities' ),
 						esc_html( $count )
 					);
 					?>
 				</li>
 				<li>
-					<?php esc_html_e( 'Browser support: Chrome 146+ required for WebMCP.', 'webmcp-for-wordpress' ); ?>
+					<?php esc_html_e( 'Browser support: Chrome 146+ required for WebMCP.', 'webmcp-abilities' ); ?>
 				</li>
 			</ul>
 
 			<p>
-				<a href="https://github.com/code-atlantic/webmcp-for-wordpress" target="_blank">
-					<?php esc_html_e( 'Plugin documentation & source code →', 'webmcp-for-wordpress' ); ?>
+				<a href="https://github.com/code-atlantic/webmcp-abilities" target="_blank">
+					<?php esc_html_e( 'Plugin documentation & source code →', 'webmcp-abilities' ); ?>
 				</a>
 			</p>
 		</div>

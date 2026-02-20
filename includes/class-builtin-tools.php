@@ -1,6 +1,6 @@
 <?php
 /**
- * Built-in starter tools for WebMCP for WordPress.
+ * Built-in starter tools for WebMCP Abilities.
  *
  * Registers four practical tools as real WordPress Abilities so they work with
  * both the WebMCP browser API and the MCP Adapter (CLI/API agents).
@@ -32,8 +32,8 @@ class Builtin_Tools {
 		wp_register_ability_category(
 			self::CATEGORY,
 			[
-				'label'       => __( 'WebMCP', 'webmcp-for-wordpress' ),
-				'description' => __( 'Tools exposed to AI agents via the WebMCP browser API.', 'webmcp-for-wordpress' ),
+				'label'       => __( 'WebMCP', 'webmcp-abilities' ),
+				'description' => __( 'Tools exposed to AI agents via the WebMCP browser API.', 'webmcp-abilities' ),
 			]
 		);
 	}
@@ -70,19 +70,19 @@ class Builtin_Tools {
 		wp_register_ability(
 			'wp/search-posts',
 			[
-				'label'               => __( 'Search Posts', 'webmcp-for-wordpress' ),
-				'description'         => __( 'Search published posts by keyword. Returns titles, excerpts, and URLs.', 'webmcp-for-wordpress' ),
+				'label'               => __( 'Search Posts', 'webmcp-abilities' ),
+				'description'         => __( 'Search published posts by keyword. Returns titles, excerpts, and URLs.', 'webmcp-abilities' ),
 				'category'            => self::CATEGORY,
 				'input_schema'        => [
 					'type'       => 'object',
 					'properties' => [
 						'query' => [
 							'type'        => 'string',
-							'description' => __( 'The search keyword or phrase.', 'webmcp-for-wordpress' ),
+							'description' => __( 'The search keyword or phrase.', 'webmcp-abilities' ),
 						],
 						'count' => [
 							'type'        => 'integer',
-							'description' => __( 'Number of results to return (1–50).', 'webmcp-for-wordpress' ),
+							'description' => __( 'Number of results to return (1–50).', 'webmcp-abilities' ),
 							'default'     => 10,
 							'minimum'     => 1,
 							'maximum'     => 50,
@@ -124,7 +124,7 @@ class Builtin_Tools {
 		$count = max( 1, min( 50, (int) ( $input['count'] ?? 10 ) ) );
 
 		if ( '' === $query ) {
-			return new \WP_Error( 'invalid_query', __( 'Search query is required.', 'webmcp-for-wordpress' ) );
+			return new \WP_Error( 'invalid_query', __( 'Search query is required.', 'webmcp-abilities' ) );
 		}
 
 		$posts = get_posts( [
@@ -155,19 +155,19 @@ class Builtin_Tools {
 		wp_register_ability(
 			'wp/get-post',
 			[
-				'label'               => __( 'Get Post', 'webmcp-for-wordpress' ),
-				'description'         => __( 'Retrieve a single post by its ID or slug. Returns the full post content, categories, tags, and metadata.', 'webmcp-for-wordpress' ),
+				'label'               => __( 'Get Post', 'webmcp-abilities' ),
+				'description'         => __( 'Retrieve a single post by its ID or slug. Returns the full post content, categories, tags, and metadata.', 'webmcp-abilities' ),
 				'category'            => self::CATEGORY,
 				'input_schema'        => [
 					'type'       => 'object',
 					'properties' => [
 						'id'   => [
 							'type'        => 'integer',
-							'description' => __( 'Post ID.', 'webmcp-for-wordpress' ),
+							'description' => __( 'Post ID.', 'webmcp-abilities' ),
 						],
 						'slug' => [
 							'type'        => 'string',
-							'description' => __( 'Post slug (URL name).', 'webmcp-for-wordpress' ),
+							'description' => __( 'Post slug (URL name).', 'webmcp-abilities' ),
 						],
 					],
 				],
@@ -222,12 +222,12 @@ class Builtin_Tools {
 		}
 
 		if ( ! $post instanceof \WP_Post ) {
-			return new \WP_Error( 'not_found', __( 'Post not found.', 'webmcp-for-wordpress' ), [ 'status' => 404 ] );
+			return new \WP_Error( 'not_found', __( 'Post not found.', 'webmcp-abilities' ), [ 'status' => 404 ] );
 		}
 
 		// Only return published posts to unauthenticated users.
 		if ( 'publish' !== $post->post_status && ! current_user_can( 'read_post', $post->ID ) ) {
-			return new \WP_Error( 'not_found', __( 'Post not found.', 'webmcp-for-wordpress' ), [ 'status' => 404 ] );
+			return new \WP_Error( 'not_found', __( 'Post not found.', 'webmcp-abilities' ), [ 'status' => 404 ] );
 		}
 
 		$categories = wp_get_post_categories( $post->ID, [ 'fields' => 'names' ] );
@@ -258,8 +258,8 @@ class Builtin_Tools {
 		wp_register_ability(
 			'wp/get-categories',
 			[
-				'label'               => __( 'Get Categories', 'webmcp-for-wordpress' ),
-				'description'         => __( 'List all post categories with their names, descriptions, and post counts.', 'webmcp-for-wordpress' ),
+				'label'               => __( 'Get Categories', 'webmcp-abilities' ),
+				'description'         => __( 'List all post categories with their names, descriptions, and post counts.', 'webmcp-abilities' ),
 				'category'            => self::CATEGORY,
 				'input_schema'        => [
 					'type'       => 'object',
@@ -329,27 +329,27 @@ class Builtin_Tools {
 		wp_register_ability(
 			'wp/submit-comment',
 			[
-				'label'               => __( 'Submit Comment', 'webmcp-for-wordpress' ),
-				'description'         => __( 'Submit a comment on a post. Respects WordPress comment settings including open/closed comments and login requirements.', 'webmcp-for-wordpress' ),
+				'label'               => __( 'Submit Comment', 'webmcp-abilities' ),
+				'description'         => __( 'Submit a comment on a post. Respects WordPress comment settings including open/closed comments and login requirements.', 'webmcp-abilities' ),
 				'category'            => self::CATEGORY,
 				'input_schema'        => [
 					'type'       => 'object',
 					'properties' => [
 						'post_id'      => [
 							'type'        => 'integer',
-							'description' => __( 'ID of the post to comment on.', 'webmcp-for-wordpress' ),
+							'description' => __( 'ID of the post to comment on.', 'webmcp-abilities' ),
 						],
 						'content'      => [
 							'type'        => 'string',
-							'description' => __( 'Comment text.', 'webmcp-for-wordpress' ),
+							'description' => __( 'Comment text.', 'webmcp-abilities' ),
 						],
 						'author_name'  => [
 							'type'        => 'string',
-							'description' => __( 'Commenter name (optional for logged-in users).', 'webmcp-for-wordpress' ),
+							'description' => __( 'Commenter name (optional for logged-in users).', 'webmcp-abilities' ),
 						],
 						'author_email' => [
 							'type'        => 'string',
-							'description' => __( 'Commenter email (optional for logged-in users).', 'webmcp-for-wordpress' ),
+							'description' => __( 'Commenter email (optional for logged-in users).', 'webmcp-abilities' ),
 						],
 					],
 					'required'   => [ 'post_id', 'content' ],
@@ -395,16 +395,16 @@ class Builtin_Tools {
 		$content = sanitize_textarea_field( $input['content'] ?? '' );
 
 		if ( ! $post_id || '' === $content ) {
-			return new \WP_Error( 'invalid_input', __( 'post_id and content are required.', 'webmcp-for-wordpress' ) );
+			return new \WP_Error( 'invalid_input', __( 'post_id and content are required.', 'webmcp-abilities' ) );
 		}
 
 		$post = get_post( $post_id );
 		if ( ! $post instanceof \WP_Post || 'publish' !== $post->post_status ) {
-			return new \WP_Error( 'not_found', __( 'Post not found.', 'webmcp-for-wordpress' ) );
+			return new \WP_Error( 'not_found', __( 'Post not found.', 'webmcp-abilities' ) );
 		}
 
 		if ( ! comments_open( $post_id ) ) {
-			return new \WP_Error( 'comments_closed', __( 'Comments are closed on this post.', 'webmcp-for-wordpress' ) );
+			return new \WP_Error( 'comments_closed', __( 'Comments are closed on this post.', 'webmcp-abilities' ) );
 		}
 
 		$comment_data = [
@@ -442,8 +442,8 @@ class Builtin_Tools {
 			'comment_id' => (int) $comment_id,
 			'status'     => $status,
 			'message'    => 'approved' === $status
-				? __( 'Comment posted successfully.', 'webmcp-for-wordpress' )
-				: __( 'Comment submitted and is awaiting moderation.', 'webmcp-for-wordpress' ),
+				? __( 'Comment posted successfully.', 'webmcp-abilities' )
+				: __( 'Comment submitted and is awaiting moderation.', 'webmcp-abilities' ),
 		];
 	}
 }

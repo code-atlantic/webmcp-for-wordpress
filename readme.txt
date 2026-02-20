@@ -1,10 +1,10 @@
-=== WebMCP for WordPress ===
+=== WebMCP Abilities ===
 Contributors: codeatlantic
 Tags: ai, agents, webmcp, abilities, mcp
 Requires at least: 6.9
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 0.5.0
+Stable tag: 0.6.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Bridges WordPress Abilities to the WebMCP browser API, making your site's capabi
 
 == Description ==
 
-**WebMCP for WordPress** connects the [WordPress Abilities API](https://developer.wordpress.org/apis/abilities-api/) to the [WebMCP browser standard](https://webmachinelearning.github.io/webmcp/), allowing AI agents running in Chrome 146+ to discover and invoke your site's registered capabilities as structured tools.
+**WebMCP Abilities** connects the [WordPress Abilities API](https://developer.wordpress.org/apis/abilities-api/) to the [WebMCP browser standard](https://webmachinelearning.github.io/webmcp/), allowing AI agents running in Chrome 146+ to discover and invoke your site's registered capabilities as structured tools.
 
 [youtube https://youtu.be/7A34ZNz2bMM]
 
@@ -64,7 +64,7 @@ wp_register_ability( 'my-plugin/my-action', array(
 
 == Installation ==
 
-1. Upload the `webmcp-for-wordpress` folder to `/wp-content/plugins/`
+1. Upload the `webmcp-abilities` folder to `/wp-content/plugins/`
 2. Activate the plugin through the **Plugins** screen in WordPress
 3. Go to **Settings → WebMCP** to enable and configure the plugin
 4. Ensure your site is served over HTTPS
@@ -99,6 +99,10 @@ This feature (which allows agents to discover tools before visiting the page) is
 
 == Changelog ==
 
+= 0.6.0 =
+* Renamed plugin from "WebMCP for WordPress" to "WebMCP Abilities for WordPress" for WordPress.org compliance
+* Updated text domain, slugs, and all references
+
 = 0.5.0 =
 * TypeScript conversion: front-end bridge rewritten in TypeScript with full type safety
 * Build pipeline: @wordpress/scripts v31.5 with webpack, output to dist/ with .asset.php manifests
@@ -116,6 +120,9 @@ This feature (which allows agents to discover tools before visiting the page) is
 * ETag-based client-side caching (24h TTL)
 
 == Upgrade Notice ==
+
+= 0.6.0 =
+Plugin renamed to "WebMCP Abilities for WordPress". Please update any references in your code or configuration.
 
 = 0.5.0 =
 TypeScript rewrite, PHPCS compliance, improved build pipeline.

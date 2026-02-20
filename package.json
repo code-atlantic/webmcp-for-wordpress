@@ -1,5 +1,5 @@
 {
-  "name": "webmcp-for-wordpress",
+  "name": "webmcp-abilities",
   "version": "1.0.0",
   "description": "Bridges WordPress Abilities to the WebMCP browser API",
   "private": true,
