@@ -141,9 +141,19 @@ class Test_REST_API extends WP_UnitTestCase {
 		$this->assertSame( 200, $response->get_status() );
 	}
 
-	public function test_execute_returns_403_without_nonce_for_logged_in_user(): void {
-		// Logged-in users must send a nonce even on public tools (CSRF protection).
+	public function test_execute_succeeds_without_nonce_for_read_only_tool(): void {
+		// Read-only tools skip CSRF nonce check even for logged-in users.
 		$request  = new WP_REST_Request( 'POST', '/webmcp/v1/execute/webmcp%2Fget-categories' );
+		$request->set_body( '{}' );
+		$request->set_header( 'Content-Type', 'application/json' );
+		$response = rest_do_request( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+	}
+
+	public function test_execute_returns_403_without_nonce_for_write_tool(): void {
+		// Write tools (no wmcp_read_only) require a nonce for logged-in users.
+		$request  = new WP_REST_Request( 'POST', '/webmcp/v1/execute/webmcp%2Fsubmit-comment' );
 		$request->set_body( '{}' );
 		$response = rest_do_request( $request );
 

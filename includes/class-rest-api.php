@@ -229,9 +229,10 @@ class REST_API {
 			);
 		}
 
-		// Nonce verification for logged-in users — prevents CSRF on authenticated tools.
-		// Unauthenticated requests to public tools skip this (no nonce available).
-		if ( is_user_logged_in() ) {
+		// Nonce verification for logged-in users on write tools — prevents CSRF.
+		// Read-only tools (wmcp_read_only) and unauthenticated requests skip this.
+		$is_read_only = (bool) $ability->get_meta_item( 'wmcp_read_only', false );
+		if ( is_user_logged_in() && ! $is_read_only ) {
 			$nonce = $request->get_header( 'x_wp_nonce' );
 			if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wmcp_execute' ) ) {
 				return new \WP_REST_Response(
