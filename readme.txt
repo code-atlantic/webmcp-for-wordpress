@@ -14,6 +14,10 @@ Bridges WordPress Abilities to the WebMCP browser API, making your site's capabi
 
 **WebMCP Abilities** connects the [WordPress Abilities API](https://developer.wordpress.org/apis/abilities-api/) to the [WebMCP browser standard](https://webmachinelearning.github.io/webmcp/), allowing AI agents running in Chrome 146+ to discover and invoke your site's registered capabilities as structured tools.
 
+**The first WordPress plugin to bridge the Abilities API to WebMCP.** Already running in production on [wppopupmaker.com](https://wppopupmaker.com) — the first WordPress site serving AI agent tools via WebMCP.
+
+[Learn more on the product page](https://code-atlantic.com/products/webmcp-abilities-for-wordpress/).
+
 [youtube https://youtu.be/7A34ZNz2bMM]
 
 = How It Works =

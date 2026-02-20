@@ -9,6 +9,10 @@
 
 **Turn any WordPress site into a structured tool server for AI agents** — no custom API, no scraping, no prompt engineering required.
 
+> **First WordPress plugin to bridge the Abilities API to Chrome's WebMCP standard.** Live in production on [wppopupmaker.com](https://wppopupmaker.com) — the first WordPress site running WebMCP.
+
+**[Product Page](https://code-atlantic.com/products/webmcp-abilities-for-wordpress/)** · **[GitHub](https://github.com/code-atlantic/webmcp-abilities)** · **[WordPress.org](https://wordpress.org/plugins/webmcp-abilities/)** *(pending review)*
+
 WebMCP Abilities connects the [WordPress Abilities API](https://developer.wordpress.org/apis/abilities-api/) to the [WebMCP browser standard](https://webmachinelearning.github.io/webmcp/), so AI agents running in Chrome 146+ can discover and call your site's capabilities as reliable, schema-driven tools.
 
 ### Demo
@@ -273,7 +277,7 @@ webmcp-abilities/
 - [ ] BuddyPress / bbPress community tools
 - [ ] Declarative WebMCP API support (HTML form population)
 - [ ] Tool annotations (`readonly`, `destructive`, `idempotent`)
-- [ ] WordPress.org plugin directory submission
+- [x] WordPress.org plugin directory submission
 
 ---
 
@@ -294,4 +298,4 @@ npx wp-env run tests-cli "..."  # verify green
 
 GPL-2.0-or-later — see [LICENSE](LICENSE) or [gnu.org/licenses/gpl-2.0](https://www.gnu.org/licenses/gpl-2.0.html).
 
-Built by [Code Atlantic](https://code-atlantic.com).
+Built by [Code Atlantic](https://code-atlantic.com) · [Product Page](https://code-atlantic.com/products/webmcp-abilities-for-wordpress/).
