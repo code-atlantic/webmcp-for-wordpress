@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebMCP for WordPress - Plugin Banner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .banner-container {
+            width: 1544px;
+            height: 500px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 60px 80px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Decorative background elements */
+        .banner-container::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(66, 133, 244, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .banner-container::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(33, 117, 155, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            z-index: 2;
+            position: relative;
+        }
+
+        .left-section {
+            flex: 1;
+        }
+
+        .plugin-name {
+            font-size: 64px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .plugin-name span {
+            background: linear-gradient(90deg, #21759B 0%, #4285F4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            font-size: 28px;
+            color: #555555;
+            font-weight: 400;
+            margin-bottom: 32px;
+            line-height: 1.3;
+        }
+
+        .description {
+            font-size: 16px;
+            color: #777777;
+            max-width: 400px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .features {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+            color: #666666;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: linear-gradient(90deg, #21759B, #4285F4);
+            flex-shrink: 0;
+        }
+
+        .right-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 380px;
+        }
+
+        /* Browser window visualization */
+        .browser-window {
+            width: 420px;
+            background: #1e1e1e;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .browser-header {
+            background: #2d2d2d;
+            padding: 12px 16px;
+            border-bottom: 1px solid #3d3d3d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .traffic-lights {
+            display: flex;
+            gap: 6px;
+        }
+
+        .traffic-light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .traffic-light.red {
+            background: #ff5f56;
+        }
+
+        .traffic-light.yellow {
+            background: #ffbd2e;
+        }
+
+        .traffic-light.green {
+            background: #27c93f;
+        }
+
+        .browser-url {
+            flex: 1;
+            text-align: center;
+            color: #888;
+        }
+
+        .browser-content {
+            padding: 24px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 11px;
+            color: #58d926;
+            line-height: 1.6;
+            background: #1e1e1e;
+        }
+
+        .code-line {
+            margin: 4px 0;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .property {
+            color: #9cdcfe;
+        }
+
+        .bracket {
+            color: #d4d4d4;
+        }
+
+        /* Connection bridge visualization */
+        .bridge-section {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo-wp {
+            background: #21759B;
+            color: white;
+        }
+
+        .logo-chrome {
+            background: #4285F4;
+            color: white;
+        }
+
+        .bridge-arrow {
+            font-size: 24px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner-container">
+        <div class="content">
+            <div class="left-section">
+                <div class="plugin-name">
+                    WebMCP for <span>WordPress</span>
+                </div>
+                <div class="tagline">AI agents, meet WordPress.</div>
+                <div class="description">
+                    Connect WordPress to the WebMCP browser standard. AI agents discover and invoke site capabilities as structured tools — no scraping, no guesswork.
+                </div>
+                <div class="features">
+                    <div class="feature">
+                        <div class="feature-dot"></div>
+                        <span>Structured tools</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-dot"></div>
+                        <span>WebMCP standard</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-dot"></div>
+                        <span>Developer-first</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-section">
+                <div class="browser-window">
+                    <div class="browser-header">
+                        <div class="traffic-lights">
+                            <div class="traffic-light red"></div>
+                            <div class="traffic-light yellow"></div>
+                            <div class="traffic-light green"></div>
+                        </div>
+                        <div class="browser-url">navigator.modelContext</div>
+                    </div>
+                    <div class="browser-content">
+                        <div class="code-line"><span class="bracket">{</span></div>
+                        <div class="code-line">  <span class="property">"tools"</span>: <span class="bracket">[</span></div>
+                        <div class="code-line">    <span class="bracket">{</span></div>
+                        <div class="code-line">      <span class="property">"name"</span>: <span class="string">"publish_post"</span>,</div>
+                        <div class="code-line">      <span class="property">"description"</span>: <span class="string">"Publish..."</span></div>
+                        <div class="code-line">    <span class="bracket">}</span>,</div>
+                        <div class="code-line">    <span class="bracket">{</span></div>
+                        <div class="code-line">      <span class="property">"name"</span>: <span class="string">"search_posts"</span></div>
+                        <div class="code-line">    <span class="bracket">}</span></div>
+                        <div class="code-line">  <span class="bracket">]</span></div>
+                        <div class="code-line"><span class="bracket">}</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

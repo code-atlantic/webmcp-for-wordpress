@@ -14,12 +14,26 @@ defined( 'ABSPATH' ) || exit;
  */
 class Admin_Page {
 
-	/** @var Settings */
+	/**
+	 * Plugin settings instance.
+	 *
+	 * @var Settings
+	 */
 	private Settings $settings;
 
-	/** @var Ability_Bridge */
+	/**
+	 * Ability bridge instance.
+	 *
+	 * @var Ability_Bridge
+	 */
 	private Ability_Bridge $bridge;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param Settings       $settings Plugin settings.
+	 * @param Ability_Bridge $bridge   Ability bridge.
+	 */
 	public function __construct( Settings $settings, Ability_Bridge $bridge ) {
 		$this->settings = $settings;
 		$this->bridge   = $bridge;
@@ -29,9 +43,9 @@ class Admin_Page {
 	 * Register admin hooks.
 	 */
 	public function register(): void {
-		add_action( 'admin_init', array( $this->settings, 'register' ) );
-		add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
-		add_action( 'admin_notices', array( $this, 'https_notice' ) );
+		add_action( 'admin_init', [ $this->settings, 'register' ] );
+		add_action( 'admin_menu', [ $this, 'add_menu_page' ] );
+		add_action( 'admin_notices', [ $this, 'https_notice' ] );
 	}
 
 	/**
@@ -43,7 +57,7 @@ class Admin_Page {
 			__( 'WebMCP', 'webmcp-for-wordpress' ),
 			'manage_options',
 			'webmcp-for-wordpress',
-			array( $this, 'render_page' )
+			[ $this, 'render_page' ]
 		);
 	}
 
@@ -82,7 +96,7 @@ class Admin_Page {
 		// Get all registered abilities for the exposed-tools list.
 		$all_abilities = function_exists( 'wp_get_abilities' )
 			? wp_get_abilities()
-			: array();
+			: [];
 
 		$exposed_tools = $this->settings->get_exposed_tools();
 		$is_enabled    = $this->settings->is_enabled();
@@ -157,7 +171,8 @@ class Admin_Page {
 								<?php esc_html_e( 'Choose which tools agents can discover and use. Uncheck any tool to hide it completely.', 'webmcp-for-wordpress' ); ?>
 							</p>
 							<fieldset>
-								<?php foreach ( $all_abilities as $name => $ability ) :
+								<?php
+								foreach ( $all_abilities as $name => $ability ) :
 									// Skip private tools — they should never appear in the UI.
 									if ( 'private' === $ability->get_meta_item( 'wmcp_visibility', 'public' ) ) {
 										continue;

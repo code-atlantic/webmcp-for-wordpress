@@ -2,8 +2,8 @@
 /node_modules/
 /vendor/
 
-# Built assets (committed separately or excluded from VCS)
-/assets/js/build/
+# Built assets — dist/ is committed for plugin distribution
+# /dist/
 
 # WordPress test suite (installed locally via composer)
 /tests/wordpress-tests-lib/

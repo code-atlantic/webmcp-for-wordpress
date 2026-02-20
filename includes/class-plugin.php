@@ -14,24 +14,51 @@ defined( 'ABSPATH' ) || exit;
  */
 class Plugin {
 
-	/** @var Plugin|null */
+	/**
+	 * Singleton instance.
+	 *
+	 * @var Plugin|null
+	 */
 	private static ?Plugin $instance = null;
 
-	/** @var Settings */
+	/**
+	 * Plugin settings instance.
+	 *
+	 * @var Settings
+	 */
 	public readonly Settings $settings;
 
-	/** @var Ability_Bridge */
+	/**
+	 * Ability bridge instance.
+	 *
+	 * @var Ability_Bridge
+	 */
 	public readonly Ability_Bridge $bridge;
 
-	/** @var REST_API */
+	/**
+	 * REST API handler instance.
+	 *
+	 * @var REST_API
+	 */
 	public readonly REST_API $rest;
 
-	/** @var Builtin_Tools */
+	/**
+	 * Built-in tools instance.
+	 *
+	 * @var Builtin_Tools
+	 */
 	public readonly Builtin_Tools $builtin_tools;
 
-	/** @var Rate_Limiter */
+	/**
+	 * Rate limiter instance.
+	 *
+	 * @var Rate_Limiter
+	 */
 	public readonly Rate_Limiter $rate_limiter;
 
+	/**
+	 * Constructor.
+	 */
 	private function __construct() {
 		$this->settings      = new Settings();
 		$this->rate_limiter  = new Rate_Limiter();
@@ -42,6 +69,11 @@ class Plugin {
 		$this->register_hooks();
 	}
 
+	/**
+	 * Get the singleton instance.
+	 *
+	 * @return Plugin
+	 */
 	public static function instance(): self {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -49,6 +81,9 @@ class Plugin {
 		return self::$instance;
 	}
 
+	/**
+	 * Register plugin hooks.
+	 */
 	private function register_hooks(): void {
 		// Register the WebMCP ability category, then built-in tools.
 		// If the action has already fired (e.g. another plugin triggered the registry
@@ -56,17 +91,17 @@ class Plugin {
 		if ( did_action( 'wp_abilities_api_categories_init' ) ) {
 			$this->builtin_tools->register_category();
 		} else {
-			add_action( 'wp_abilities_api_categories_init', array( $this->builtin_tools, 'register_category' ) );
+			add_action( 'wp_abilities_api_categories_init', [ $this->builtin_tools, 'register_category' ] );
 		}
 
 		if ( did_action( 'wp_abilities_api_init' ) ) {
 			$this->builtin_tools->register();
 		} else {
-			add_action( 'wp_abilities_api_init', array( $this->builtin_tools, 'register' ) );
+			add_action( 'wp_abilities_api_init', [ $this->builtin_tools, 'register' ] );
 		}
 
 		// Enqueue front-end JS.
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend' ) );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend' ] );
 
 		// Admin page.
 		if ( is_admin() ) {
@@ -75,8 +110,8 @@ class Plugin {
 		}
 
 		// Cache invalidation when plugins activate/deactivate.
-		add_action( 'activate_plugin',   array( $this->bridge, 'invalidate_cache' ) );
-		add_action( 'deactivate_plugin', array( $this->bridge, 'invalidate_cache' ) );
+		add_action( 'activate_plugin', [ $this->bridge, 'invalidate_cache' ] );
+		add_action( 'deactivate_plugin', [ $this->bridge, 'invalidate_cache' ] );
 	}
 
 	/**
@@ -93,29 +128,32 @@ class Plugin {
 			return;
 		}
 
-		$asset_file = WMCP_PLUGIN_DIR . 'assets/js/build/webmcp-for-wordpress.asset.php';
+		$asset_file = WMCP_PLUGIN_DIR . 'dist/webmcp-for-wordpress.asset.php';
 		$asset      = file_exists( $asset_file )
 			? require $asset_file
-			: array( 'dependencies' => array(), 'version' => WMCP_VERSION );
+			: [
+				'dependencies' => [],
+				'version'      => WMCP_VERSION,
+			];
 
 		wp_enqueue_script(
 			'webmcp-for-wordpress',
-			WMCP_PLUGIN_URL . 'assets/js/build/webmcp-for-wordpress.js',
+			WMCP_PLUGIN_URL . 'dist/webmcp-for-wordpress.js',
 			$asset['dependencies'],
 			$asset['version'],
-			array( 'strategy' => 'defer' )
+			[ 'strategy' => 'defer' ]
 		);
 
 		// Pass configuration to the script.
 		wp_localize_script(
 			'webmcp-for-wordpress',
 			'wmcpBridge',
-			array(
+			[
 				'toolsEndpoint'   => rest_url( 'webmcp/v1/tools' ),
 				'executeEndpoint' => rest_url( 'webmcp/v1/execute/' ),
 				'nonceEndpoint'   => rest_url( 'webmcp/v1/nonce' ),
 				'nonce'           => wp_create_nonce( 'wmcp_execute' ),
-			)
+			]
 		);
 	}
 }

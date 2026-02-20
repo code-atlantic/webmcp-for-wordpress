@@ -1,0 +1,76 @@
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="50%" stop-color="#1a1a1a"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </linearGradient>
+    <linearGradient id="wpToChrome" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#21759B"/>
+      <stop offset="100%" stop-color="#4285F4"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#21759B"/>
+      <stop offset="100%" stop-color="#4285F4"/>
+    </linearGradient>
+    <radialGradient id="glowWP" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(200, 150) scale(350)">
+      <stop offset="0%" stop-color="#21759B" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#21759B" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowChrome" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1080, 570) scale(350)">
+      <stop offset="0%" stop-color="#4285F4" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#4285F4" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Grid pattern -->
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#21759B" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <rect width="1280" height="720" fill="url(#grid)"/>
+
+  <!-- Glows -->
+  <circle cx="200" cy="150" r="350" fill="url(#glowWP)"/>
+  <circle cx="1080" cy="570" r="350" fill="url(#glowChrome)"/>
+
+  <!-- Corner frames -->
+  <path d="M 32 92 L 32 32 L 92 32" fill="none" stroke="#21759B" stroke-opacity="0.4" stroke-width="2"/>
+  <path d="M 1188 32 L 1248 32 L 1248 92" fill="none" stroke="#4285F4" stroke-opacity="0.4" stroke-width="2"/>
+  <path d="M 32 628 L 32 688 L 92 688" fill="none" stroke="#21759B" stroke-opacity="0.4" stroke-width="2"/>
+  <path d="M 1248 628 L 1248 688 L 1188 688" fill="none" stroke="#4285F4" stroke-opacity="0.4" stroke-width="2"/>
+
+  <!-- WordPress logo badge -->
+  <rect x="522" y="218" width="72" height="72" rx="16" fill="#21759B"/>
+  <text x="558" y="268" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="36" font-weight="700" fill="white" text-anchor="middle">W</text>
+
+  <!-- Bridge line -->
+  <circle cx="610" cy="254" r="3" fill="white" opacity="0.3"/>
+  <line x1="618" y1="254" x2="662" y2="254" stroke="url(#wpToChrome)" stroke-width="2" opacity="0.5"/>
+  <circle cx="670" cy="254" r="3" fill="white" opacity="0.3"/>
+
+  <!-- Chrome logo badge -->
+  <rect x="686" y="218" width="72" height="72" rx="16" fill="#4285F4"/>
+  <circle cx="722" cy="254" r="18" fill="none" stroke="white" stroke-width="2.5"/>
+  <circle cx="722" cy="254" r="7" fill="white"/>
+
+  <!-- Title: "WebMCP for" in white -->
+  <text x="640" y="370" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="72" font-weight="700" fill="white" text-anchor="middle" letter-spacing="-1">
+    WebMCP for
+  </text>
+
+  <!-- Title: "WordPress" in gradient -->
+  <text x="640" y="450" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="72" font-weight="700" fill="url(#textGrad)" text-anchor="middle" letter-spacing="-1">
+    WordPress
+  </text>
+
+  <!-- Subtitle -->
+  <text x="640" y="510" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="28" font-weight="400" fill="#adbac7" text-anchor="middle" letter-spacing="0.5">
+    AI agents, structured tools, zero scraping
+  </text>
+
+  <!-- Accent line -->
+  <rect x="580" y="545" width="120" height="3" rx="1.5" fill="url(#wpToChrome)"/>
+</svg>

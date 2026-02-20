@@ -6,6 +6,24 @@
  * to AI agents in Chrome 146+.
  */
 
+interface ToolDefinition {
+	name: string;
+	description: string;
+	inputSchema?: Record< string, unknown >;
+	annotations?: ToolAnnotations;
+}
+
+interface ToolsCache {
+	tools: ToolDefinition[];
+	etag: string;
+	expiry: number;
+}
+
+interface ToolsResponse {
+	tools: ToolDefinition[];
+	nonce?: string;
+}
+
 ( function () {
 	'use strict';
 
@@ -20,7 +38,7 @@
 	}
 
 	const { toolsEndpoint, executeEndpoint, nonceEndpoint } = wmcpBridge;
-	let currentNonce = wmcpBridge.nonce;
+	let currentNonce: string = wmcpBridge.nonce;
 
 	// -------------------------------------------------------------------------
 	// LocalStorage cache for tool definitions (24h TTL).
@@ -30,12 +48,14 @@
 	const CACHE_KEY = 'wmcp_tools_cache';
 	const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in ms
 
-	function getCachedTools() {
+	function getCachedTools(): { tools: ToolDefinition[]; etag: string } | null {
 		try {
 			const raw = localStorage.getItem( CACHE_KEY );
-			if ( ! raw ) return null;
+			if ( ! raw ) {
+				return null;
+			}
 
-			const { tools, etag, expiry } = JSON.parse( raw );
+			const { tools, etag, expiry } = JSON.parse( raw ) as ToolsCache;
 			if ( Date.now() > expiry ) {
 				localStorage.removeItem( CACHE_KEY );
 				return null;
@@ -46,7 +66,7 @@
 		}
 	}
 
-	function setCachedTools( tools, etag ) {
+	function setCachedTools( tools: ToolDefinition[], etag: string ): void {
 		try {
 			localStorage.setItem(
 				CACHE_KEY,
@@ -65,13 +85,13 @@
 	// Nonce refresh — called on 403 responses.
 	// -------------------------------------------------------------------------
 
-	async function refreshNonce() {
+	async function refreshNonce(): Promise< void > {
 		try {
 			const response = await fetch( nonceEndpoint, {
 				credentials: 'same-origin',
 			} );
 			if ( response.ok ) {
-				const data = await response.json();
+				const data = ( await response.json() ) as { nonce?: string };
 				currentNonce = data.nonce ?? currentNonce;
 			}
 		} catch {
@@ -83,19 +103,19 @@
 	// Fetch tools from the REST API, respecting ETag for cache validation.
 	// -------------------------------------------------------------------------
 
-	async function fetchTools() {
+	async function fetchTools(): Promise< ToolDefinition[] > {
 		const cached = getCachedTools();
 
 		// Do NOT send X-WP-Nonce on the tools request — WP core rejects an invalid
 		// nonce with 403 before our permission callback runs. Cookie auth alone is
 		// sufficient for the is_user_logged_in() check on the tools endpoint.
-		const headers = {};
+		const headers: Record< string, string > = {};
 
 		if ( cached?.etag ) {
 			headers[ 'If-None-Match' ] = `"${ cached.etag }"`;
 		}
 
-		let response;
+		let response: Response;
 		try {
 			response = await fetch( toolsEndpoint, {
 				headers,
@@ -115,9 +135,9 @@
 			return cached?.tools ?? [];
 		}
 
-		const data = await response.json();
+		const data = ( await response.json() ) as ToolsResponse;
 		const tools = data.tools ?? [];
-		const etag  = response.headers.get( 'ETag' )?.replace( /"/g, '' ) ?? '';
+		const etag = response.headers.get( 'ETag' )?.replace( /"/g, '' ) ?? '';
 
 		// Update the current nonce from the response.
 		if ( data.nonce ) {
@@ -133,21 +153,27 @@
 	// Auto-retries once on 403 (expired nonce).
 	// -------------------------------------------------------------------------
 
-	async function executeTool( toolName, input, readOnly = false ) {
+	async function executeTool(
+		toolName: string,
+		input: Record< string, unknown >,
+		readOnly = false
+	): Promise< McpResult > {
 		const url = executeEndpoint + encodeURIComponent( toolName );
 
-		async function doRequest( nonce ) {
-			const headers = { 'Content-Type': 'application/json' };
+		async function doRequest( nonce: string ): Promise< Response > {
+			const reqHeaders: Record< string, string > = {
+				'Content-Type': 'application/json',
+			};
 			// Read-only tools skip the nonce — WP core would reject a stale nonce
 			// with 403 before our permission check runs, and the server doesn't
 			// require it for read-only tools anyway.
 			if ( ! readOnly && nonce ) {
-				headers[ 'X-WP-Nonce' ] = nonce;
+				reqHeaders[ 'X-WP-Nonce' ] = nonce;
 			}
 			return fetch( url, {
-				method:      'POST',
+				method: 'POST',
 				credentials: 'same-origin',
-				headers,
+				headers: reqHeaders,
 				body: JSON.stringify( input ),
 			} );
 		}
@@ -163,13 +189,15 @@
 		if ( ! response.ok ) {
 			let errorMessage = `HTTP ${ response.status }`;
 			try {
-				const errData = await response.json();
+				const errData = ( await response.json() ) as { message?: string };
 				errorMessage = errData.message ?? errorMessage;
-			} catch { /* non-JSON body — use status code */ }
+			} catch {
+				/* non-JSON body — use status code */
+			}
 			throw new Error( `WebMCP for WordPress: ${ errorMessage }` );
 		}
 
-		const data = await response.json();
+		const data = ( await response.json() ) as { result: unknown };
 
 		// Chrome's WebMCP implementation expects the MCP content-array format.
 		return {
@@ -181,8 +209,8 @@
 	// Register all tools with navigator.modelContext.
 	// -------------------------------------------------------------------------
 
-	async function registerTools() {
-		let tools;
+	async function registerTools(): Promise< void > {
+		let tools: ToolDefinition[];
 		try {
 			tools = await fetchTools();
 		} catch {
@@ -194,20 +222,28 @@
 		}
 
 		// Build the tool list in the format the spec requires.
-		// execute receives (input, client) — client is ModelContextClient for
-		// requestUserInteraction(); we don't use it since auth happens server-side.
-		const mcpTools = tools
+		const mcpTools: McpTool[] = tools
 			.filter( ( tool ) => tool.name && tool.description )
 			.map( ( tool ) => {
 				// Gemini rejects tool names containing '/'. Sanitize for WebMCP
 				// registration while keeping the original name for the execute URL.
 				const safeName = tool.name.replace( /\//g, '_' );
 
-				const entry = {
-					name:        safeName,
+				const entry: McpTool = {
+					name: safeName,
 					description: tool.description,
-					inputSchema: tool.inputSchema ?? { type: 'object', properties: {} },
-					execute:     async ( input /*, client */ ) => executeTool( tool.name, input, !! tool.annotations?.readOnlyHint ),
+					inputSchema: tool.inputSchema ?? {
+						type: 'object',
+						properties: {},
+					},
+					execute: async (
+						input: Record< string, unknown >
+					): Promise< McpResult > =>
+						executeTool(
+							tool.name,
+							input,
+							!! tool.annotations?.readOnlyHint
+						),
 				};
 				if ( tool.annotations ) {
 					entry.annotations = tool.annotations;
@@ -221,7 +257,7 @@
 
 		// provideContext() atomically replaces the full tool set — safer than
 		// looping registerTool() which throws on duplicate names.
-		navigator.modelContext.provideContext( { tools: mcpTools } );
+		navigator.modelContext!.provideContext( { tools: mcpTools } );
 	}
 
 	// -------------------------------------------------------------------------

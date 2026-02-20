@@ -18,9 +18,18 @@ class Ability_Bridge {
 	/** Object cache group for the tools list. */
 	const CACHE_GROUP = 'wmcp_bridge';
 
-	/** @var Settings */
+	/**
+	 * Plugin settings instance.
+	 *
+	 * @var Settings
+	 */
 	private Settings $settings;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param Settings $settings Plugin settings.
+	 */
 	public function __construct( Settings $settings ) {
 		$this->settings = $settings;
 	}
@@ -54,11 +63,11 @@ class Ability_Bridge {
 	 */
 	private function build_tools(): array {
 		if ( ! function_exists( 'wp_get_abilities' ) ) {
-			return array();
+			return [];
 		}
 
 		$abilities = wp_get_abilities();
-		$tools     = array();
+		$tools     = [];
 
 		foreach ( $abilities as $name => $ability ) {
 			$tool = $this->convert( $name, $ability );
@@ -100,15 +109,15 @@ class Ability_Bridge {
 		$input_schema = $this->validate_schema( $ability->get_input_schema() );
 
 		// 5. Build the tool definition.
-		$tool = array(
+		$tool = [
 			'name'        => $name,
 			'description' => wp_strip_all_tags( $ability->get_description() ),
 			'inputSchema' => $input_schema,
-		);
+		];
 
 		// 6. Add readOnlyHint annotation if the ability declares itself read-only.
 		if ( $ability->get_meta_item( 'wmcp_read_only', false ) ) {
-			$tool['annotations'] = array( 'readOnlyHint' => true );
+			$tool['annotations'] = [ 'readOnlyHint' => true ];
 		}
 
 		/**
@@ -145,7 +154,10 @@ class Ability_Bridge {
 	 */
 	public function validate_schema( array $schema ): array {
 		// Cast properties to stdClass so JSON encodes as {} not [].
-		$empty = array( 'type' => 'object', 'properties' => new \stdClass() );
+		$empty = [
+			'type'       => 'object',
+			'properties' => new \stdClass(),
+		];
 
 		if ( empty( $schema ) ) {
 			return $empty;

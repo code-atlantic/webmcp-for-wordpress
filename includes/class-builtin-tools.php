@@ -31,10 +31,10 @@ class Builtin_Tools {
 	public function register_category(): void {
 		wp_register_ability_category(
 			self::CATEGORY,
-			array(
+			[
 				'label'       => __( 'WebMCP', 'webmcp-for-wordpress' ),
 				'description' => __( 'Tools exposed to AI agents via the WebMCP browser API.', 'webmcp-for-wordpress' ),
-			)
+			]
 		);
 	}
 
@@ -63,47 +63,53 @@ class Builtin_Tools {
 	// Tool: wp/search-posts
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Register the wp/search-posts tool.
+	 */
 	private function register_search_posts(): void {
 		wp_register_ability(
 			'wp/search-posts',
-			array(
+			[
 				'label'               => __( 'Search Posts', 'webmcp-for-wordpress' ),
 				'description'         => __( 'Search published posts by keyword. Returns titles, excerpts, and URLs.', 'webmcp-for-wordpress' ),
 				'category'            => self::CATEGORY,
-				'input_schema'        => array(
+				'input_schema'        => [
 					'type'       => 'object',
-					'properties' => array(
-						'query' => array(
+					'properties' => [
+						'query' => [
 							'type'        => 'string',
 							'description' => __( 'The search keyword or phrase.', 'webmcp-for-wordpress' ),
-						),
-						'count' => array(
+						],
+						'count' => [
 							'type'        => 'integer',
 							'description' => __( 'Number of results to return (1–50).', 'webmcp-for-wordpress' ),
 							'default'     => 10,
 							'minimum'     => 1,
 							'maximum'     => 50,
-						),
-					),
-					'required'   => array( 'query' ),
-				),
-				'output_schema'       => array(
+						],
+					],
+					'required'   => [ 'query' ],
+				],
+				'output_schema'       => [
 					'type'  => 'array',
-					'items' => array(
+					'items' => [
 						'type'       => 'object',
-						'properties' => array(
-							'id'      => array( 'type' => 'integer' ),
-							'title'   => array( 'type' => 'string' ),
-							'excerpt' => array( 'type' => 'string' ),
-							'url'     => array( 'type' => 'string' ),
-							'date'    => array( 'type' => 'string' ),
-						),
-					),
-				),
-				'execute_callback'    => array( $this, 'execute_search_posts' ),
+						'properties' => [
+							'id'      => [ 'type' => 'integer' ],
+							'title'   => [ 'type' => 'string' ],
+							'excerpt' => [ 'type' => 'string' ],
+							'url'     => [ 'type' => 'string' ],
+							'date'    => [ 'type' => 'string' ],
+						],
+					],
+				],
+				'execute_callback'    => [ $this, 'execute_search_posts' ],
 				'permission_callback' => '__return_true',
-				'meta'                => array( 'wmcp_visibility' => 'public', 'wmcp_read_only' => true ),
-			)
+				'meta'                => [
+					'wmcp_visibility' => 'public',
+					'wmcp_read_only'  => true,
+				],
+			]
 		);
 	}
 
@@ -121,20 +127,20 @@ class Builtin_Tools {
 			return new \WP_Error( 'invalid_query', __( 'Search query is required.', 'webmcp-for-wordpress' ) );
 		}
 
-		$posts = get_posts( array(
+		$posts = get_posts( [
 			'post_status'    => 'publish',
 			'posts_per_page' => $count,
 			's'              => $query,
-		) );
+		] );
 
 		return array_map( static function ( \WP_Post $post ): array {
-			return array(
+			return [
 				'id'      => $post->ID,
 				'title'   => get_the_title( $post ),
 				'excerpt' => wp_strip_all_tags( get_the_excerpt( $post ) ),
 				'url'     => get_permalink( $post ),
 				'date'    => $post->post_date,
-			);
+			];
 		}, $posts );
 	}
 
@@ -142,44 +148,56 @@ class Builtin_Tools {
 	// Tool: wp/get-post
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Register the wp/get-post tool.
+	 */
 	private function register_get_post(): void {
 		wp_register_ability(
 			'wp/get-post',
-			array(
+			[
 				'label'               => __( 'Get Post', 'webmcp-for-wordpress' ),
 				'description'         => __( 'Retrieve a single post by its ID or slug. Returns the full post content, categories, tags, and metadata.', 'webmcp-for-wordpress' ),
 				'category'            => self::CATEGORY,
-				'input_schema'        => array(
+				'input_schema'        => [
 					'type'       => 'object',
-					'properties' => array(
-						'id'   => array(
+					'properties' => [
+						'id'   => [
 							'type'        => 'integer',
 							'description' => __( 'Post ID.', 'webmcp-for-wordpress' ),
-						),
-						'slug' => array(
+						],
+						'slug' => [
 							'type'        => 'string',
 							'description' => __( 'Post slug (URL name).', 'webmcp-for-wordpress' ),
-						),
-					),
-				),
-				'output_schema'       => array(
+						],
+					],
+				],
+				'output_schema'       => [
 					'type'       => 'object',
-					'properties' => array(
-						'id'         => array( 'type' => 'integer' ),
-						'title'      => array( 'type' => 'string' ),
-						'content'    => array( 'type' => 'string' ),
-						'excerpt'    => array( 'type' => 'string' ),
-						'date'       => array( 'type' => 'string' ),
-						'author'     => array( 'type' => 'string' ),
-						'url'        => array( 'type' => 'string' ),
-						'categories' => array( 'type' => 'array', 'items' => array( 'type' => 'string' ) ),
-						'tags'       => array( 'type' => 'array', 'items' => array( 'type' => 'string' ) ),
-					),
-				),
-				'execute_callback'    => array( $this, 'execute_get_post' ),
+					'properties' => [
+						'id'         => [ 'type' => 'integer' ],
+						'title'      => [ 'type' => 'string' ],
+						'content'    => [ 'type' => 'string' ],
+						'excerpt'    => [ 'type' => 'string' ],
+						'date'       => [ 'type' => 'string' ],
+						'author'     => [ 'type' => 'string' ],
+						'url'        => [ 'type' => 'string' ],
+						'categories' => [
+							'type'  => 'array',
+							'items' => [ 'type' => 'string' ],
+						],
+						'tags'       => [
+							'type'  => 'array',
+							'items' => [ 'type' => 'string' ],
+						],
+					],
+				],
+				'execute_callback'    => [ $this, 'execute_get_post' ],
 				'permission_callback' => '__return_true',
-				'meta'                => array( 'wmcp_visibility' => 'public', 'wmcp_read_only' => true ),
-			)
+				'meta'                => [
+					'wmcp_visibility' => 'public',
+					'wmcp_read_only'  => true,
+				],
+			]
 		);
 	}
 
@@ -195,73 +213,79 @@ class Builtin_Tools {
 		if ( ! empty( $input['id'] ) ) {
 			$post = get_post( (int) $input['id'] );
 		} elseif ( ! empty( $input['slug'] ) ) {
-			$posts = get_posts( array(
+			$posts = get_posts( [
 				'name'        => sanitize_title( $input['slug'] ),
 				'post_status' => 'publish',
 				'numberposts' => 1,
-			) );
+			] );
 			$post  = $posts[0] ?? null;
 		}
 
 		if ( ! $post instanceof \WP_Post ) {
-			return new \WP_Error( 'not_found', __( 'Post not found.', 'webmcp-for-wordpress' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'not_found', __( 'Post not found.', 'webmcp-for-wordpress' ), [ 'status' => 404 ] );
 		}
 
 		// Only return published posts to unauthenticated users.
 		if ( 'publish' !== $post->post_status && ! current_user_can( 'read_post', $post->ID ) ) {
-			return new \WP_Error( 'not_found', __( 'Post not found.', 'webmcp-for-wordpress' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'not_found', __( 'Post not found.', 'webmcp-for-wordpress' ), [ 'status' => 404 ] );
 		}
 
-		$categories = wp_get_post_categories( $post->ID, array( 'fields' => 'names' ) );
-		$tags       = wp_get_post_tags( $post->ID, array( 'fields' => 'names' ) );
+		$categories = wp_get_post_categories( $post->ID, [ 'fields' => 'names' ] );
+		$tags       = wp_get_post_tags( $post->ID, [ 'fields' => 'names' ] );
 		$author     = get_the_author_meta( 'display_name', (int) $post->post_author );
 
-		return array(
+		return [
 			'id'         => $post->ID,
 			'title'      => get_the_title( $post ),
-			'content'    => wp_strip_all_tags( apply_filters( 'the_content', $post->post_content ) ),
+			'content'    => wp_strip_all_tags( apply_filters( 'the_content', $post->post_content ) ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core WordPress filter.
 			'excerpt'    => wp_strip_all_tags( get_the_excerpt( $post ) ),
 			'date'       => $post->post_date,
 			'author'     => $author,
 			'url'        => get_permalink( $post ),
-			'categories' => is_array( $categories ) ? $categories : array(),
-			'tags'       => is_array( $tags ) ? $tags : array(),
-		);
+			'categories' => is_array( $categories ) ? $categories : [],
+			'tags'       => is_array( $tags ) ? $tags : [],
+		];
 	}
 
 	// -------------------------------------------------------------------------
 	// Tool: wp/get-categories
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Register the wp/get-categories tool.
+	 */
 	private function register_get_categories(): void {
 		wp_register_ability(
 			'wp/get-categories',
-			array(
+			[
 				'label'               => __( 'Get Categories', 'webmcp-for-wordpress' ),
 				'description'         => __( 'List all post categories with their names, descriptions, and post counts.', 'webmcp-for-wordpress' ),
 				'category'            => self::CATEGORY,
-				'input_schema'        => array(
+				'input_schema'        => [
 					'type'       => 'object',
 					'properties' => new \stdClass(),
-				),
-				'output_schema'       => array(
+				],
+				'output_schema'       => [
 					'type'  => 'array',
-					'items' => array(
+					'items' => [
 						'type'       => 'object',
-						'properties' => array(
-							'id'          => array( 'type' => 'integer' ),
-							'name'        => array( 'type' => 'string' ),
-							'slug'        => array( 'type' => 'string' ),
-							'description' => array( 'type' => 'string' ),
-							'count'       => array( 'type' => 'integer' ),
-							'url'         => array( 'type' => 'string' ),
-						),
-					),
-				),
-				'execute_callback'    => array( $this, 'execute_get_categories' ),
+						'properties' => [
+							'id'          => [ 'type' => 'integer' ],
+							'name'        => [ 'type' => 'string' ],
+							'slug'        => [ 'type' => 'string' ],
+							'description' => [ 'type' => 'string' ],
+							'count'       => [ 'type' => 'integer' ],
+							'url'         => [ 'type' => 'string' ],
+						],
+					],
+				],
+				'execute_callback'    => [ $this, 'execute_get_categories' ],
 				'permission_callback' => '__return_true',
-				'meta'                => array( 'wmcp_visibility' => 'public', 'wmcp_read_only' => true ),
-			)
+				'meta'                => [
+					'wmcp_visibility' => 'public',
+					'wmcp_read_only'  => true,
+				],
+			]
 		);
 	}
 
@@ -271,26 +295,26 @@ class Builtin_Tools {
 	 * @param array $input Validated input (unused).
 	 * @return array
 	 */
-	public function execute_get_categories( array $input ): array {
-		$categories = get_categories( array(
+	public function execute_get_categories( array $input ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- Required by callback signature.
+		$categories = get_categories( [
 			'hide_empty' => false,
 			'orderby'    => 'name',
 			'order'      => 'ASC',
-		) );
+		] );
 
 		if ( is_wp_error( $categories ) || ! is_array( $categories ) ) {
-			return array();
+			return [];
 		}
 
 		return array_map( static function ( \WP_Term $cat ): array {
-			return array(
+			return [
 				'id'          => $cat->term_id,
 				'name'        => $cat->name,
 				'slug'        => $cat->slug,
 				'description' => wp_strip_all_tags( $cat->description ),
 				'count'       => (int) $cat->count,
 				'url'         => get_category_link( $cat->term_id ),
-			);
+			];
 		}, $categories );
 	}
 
@@ -298,47 +322,53 @@ class Builtin_Tools {
 	// Tool: wp/submit-comment
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Register the wp/submit-comment tool.
+	 */
 	private function register_submit_comment(): void {
 		wp_register_ability(
 			'wp/submit-comment',
-			array(
+			[
 				'label'               => __( 'Submit Comment', 'webmcp-for-wordpress' ),
 				'description'         => __( 'Submit a comment on a post. Respects WordPress comment settings including open/closed comments and login requirements.', 'webmcp-for-wordpress' ),
 				'category'            => self::CATEGORY,
-				'input_schema'        => array(
+				'input_schema'        => [
 					'type'       => 'object',
-					'properties' => array(
-						'post_id'      => array(
+					'properties' => [
+						'post_id'      => [
 							'type'        => 'integer',
 							'description' => __( 'ID of the post to comment on.', 'webmcp-for-wordpress' ),
-						),
-						'content'      => array(
+						],
+						'content'      => [
 							'type'        => 'string',
 							'description' => __( 'Comment text.', 'webmcp-for-wordpress' ),
-						),
-						'author_name'  => array(
+						],
+						'author_name'  => [
 							'type'        => 'string',
 							'description' => __( 'Commenter name (optional for logged-in users).', 'webmcp-for-wordpress' ),
-						),
-						'author_email' => array(
+						],
+						'author_email' => [
 							'type'        => 'string',
 							'description' => __( 'Commenter email (optional for logged-in users).', 'webmcp-for-wordpress' ),
-						),
-					),
-					'required'   => array( 'post_id', 'content' ),
-				),
-				'output_schema'       => array(
+						],
+					],
+					'required'   => [ 'post_id', 'content' ],
+				],
+				'output_schema'       => [
 					'type'       => 'object',
-					'properties' => array(
-						'comment_id' => array( 'type' => 'integer' ),
-						'status'     => array( 'type' => 'string', 'enum' => array( 'approved', 'pending', 'spam' ) ),
-						'message'    => array( 'type' => 'string' ),
-					),
-				),
-				'execute_callback'    => array( $this, 'execute_submit_comment' ),
-				'permission_callback' => array( $this, 'can_submit_comment' ),
-				'meta'                => array( 'wmcp_visibility' => 'public' ),
-			)
+					'properties' => [
+						'comment_id' => [ 'type' => 'integer' ],
+						'status'     => [
+							'type' => 'string',
+							'enum' => [ 'approved', 'pending', 'spam' ],
+						],
+						'message'    => [ 'type' => 'string' ],
+					],
+				],
+				'execute_callback'    => [ $this, 'execute_submit_comment' ],
+				'permission_callback' => [ $this, 'can_submit_comment' ],
+				'meta'                => [ 'wmcp_visibility' => 'public' ],
+			]
 		);
 	}
 
@@ -377,16 +407,16 @@ class Builtin_Tools {
 			return new \WP_Error( 'comments_closed', __( 'Comments are closed on this post.', 'webmcp-for-wordpress' ) );
 		}
 
-		$comment_data = array(
+		$comment_data = [
 			'comment_post_ID'  => $post_id,
 			'comment_content'  => $content,
 			'comment_approved' => 0, // Let WordPress approval workflow decide.
-		);
+		];
 
 		// Fill in author info from logged-in user or from input.
 		if ( is_user_logged_in() ) {
-			$user                         = wp_get_current_user();
-			$comment_data['user_id']      = $user->ID;
+			$user                                 = wp_get_current_user();
+			$comment_data['user_id']              = $user->ID;
 			$comment_data['comment_author']       = $user->display_name;
 			$comment_data['comment_author_email'] = $user->user_email;
 			$comment_data['comment_author_url']   = $user->user_url;
@@ -408,12 +438,12 @@ class Builtin_Tools {
 			default => 'pending',
 		};
 
-		return array(
+		return [
 			'comment_id' => (int) $comment_id,
 			'status'     => $status,
 			'message'    => 'approved' === $status
 				? __( 'Comment posted successfully.', 'webmcp-for-wordpress' )
 				: __( 'Comment submitted and is awaiting moderation.', 'webmcp-for-wordpress' ),
-		);
+		];
 	}
 }

@@ -19,15 +19,34 @@ class REST_API {
 
 	const NAMESPACE = 'webmcp/v1';
 
-	/** @var Ability_Bridge */
+	/**
+	 * Ability bridge instance.
+	 *
+	 * @var Ability_Bridge
+	 */
 	private Ability_Bridge $bridge;
 
-	/** @var Rate_Limiter */
+	/**
+	 * Rate limiter instance.
+	 *
+	 * @var Rate_Limiter
+	 */
 	private Rate_Limiter $rate_limiter;
 
-	/** @var Settings */
+	/**
+	 * Plugin settings instance.
+	 *
+	 * @var Settings
+	 */
 	private Settings $settings;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param Ability_Bridge $bridge       Ability bridge.
+	 * @param Rate_Limiter   $rate_limiter Rate limiter.
+	 * @param Settings       $settings     Plugin settings.
+	 */
 	public function __construct(
 		Ability_Bridge $bridge,
 		Rate_Limiter $rate_limiter,
@@ -37,7 +56,7 @@ class REST_API {
 		$this->rate_limiter = $rate_limiter;
 		$this->settings     = $settings;
 
-		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
 	}
 
 	/**
@@ -48,11 +67,11 @@ class REST_API {
 		register_rest_route(
 			self::NAMESPACE,
 			'/tools',
-			array(
+			[
 				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_tools' ),
-				'permission_callback' => array( $this, 'tools_permission_check' ),
-			)
+				'callback'            => [ $this, 'get_tools' ],
+				'permission_callback' => [ $this, 'tools_permission_check' ],
+			]
 		);
 
 		// Tool execution endpoint.
@@ -60,30 +79,30 @@ class REST_API {
 		register_rest_route(
 			self::NAMESPACE,
 			'/execute/(?P<ability>[a-zA-Z0-9_%\-]+)',
-			array(
+			[
 				'methods'             => \WP_REST_Server::CREATABLE,
-				'callback'            => array( $this, 'execute_tool' ),
-				'permission_callback' => array( $this, 'execute_permission_check' ),
-				'args'                => array(
-					'ability' => array(
+				'callback'            => [ $this, 'execute_tool' ],
+				'permission_callback' => [ $this, 'execute_permission_check' ],
+				'args'                => [
+					'ability' => [
 						'required'          => true,
 						'sanitize_callback' => static function ( $value ) {
 							return sanitize_text_field( rawurldecode( $value ) );
 						},
-					),
-				),
-			)
+					],
+				],
+			]
 		);
 
 		// Nonce refresh endpoint.
 		register_rest_route(
 			self::NAMESPACE,
 			'/nonce',
-			array(
+			[
 				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_nonce' ),
+				'callback'            => [ $this, 'get_nonce' ],
 				'permission_callback' => '__return_true',
-			)
+			]
 		);
 	}
 
@@ -94,10 +113,12 @@ class REST_API {
 	/**
 	 * Permission check for the tools discovery endpoint.
 	 * Enforces authentication unless public discovery is enabled.
+	 *
+	 * @param \WP_REST_Request $request Request object.
 	 */
-	public function tools_permission_check( \WP_REST_Request $request ): bool|\WP_Error {
+	public function tools_permission_check( \WP_REST_Request $request ): bool|\WP_Error { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- Required by REST API signature.
 		if ( ! $this->settings->is_enabled() ) {
-			return new \WP_Error( 'wmcp_disabled', __( 'WebMCP for WordPress is not enabled.', 'webmcp-for-wordpress' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'wmcp_disabled', __( 'WebMCP for WordPress is not enabled.', 'webmcp-for-wordpress' ), [ 'status' => 404 ] );
 		}
 
 		// Rate-limit discovery by IP.
@@ -106,7 +127,7 @@ class REST_API {
 			return new \WP_Error(
 				'wmcp_rate_limited',
 				__( 'Too many requests. Please slow down.', 'webmcp-for-wordpress' ),
-				array( 'status' => 429 )
+				[ 'status' => 429 ]
 			);
 		}
 
@@ -117,7 +138,7 @@ class REST_API {
 
 		// Otherwise require authentication.
 		if ( ! is_user_logged_in() ) {
-			return new \WP_Error( 'wmcp_auth_required', __( 'Authentication required.', 'webmcp-for-wordpress' ), array( 'status' => 401 ) );
+			return new \WP_Error( 'wmcp_auth_required', __( 'Authentication required.', 'webmcp-for-wordpress' ), [ 'status' => 401 ] );
 		}
 
 		return true;
@@ -125,6 +146,8 @@ class REST_API {
 
 	/**
 	 * Handle GET /tools — return all discoverable tools for the current user.
+	 *
+	 * @param \WP_REST_Request $request Request object.
 	 */
 	public function get_tools( \WP_REST_Request $request ): \WP_REST_Response {
 		$tools = $this->bridge->get_tools_for_current_user();
@@ -137,10 +160,10 @@ class REST_API {
 		}
 
 		$response = new \WP_REST_Response(
-			array(
+			[
 				'tools' => $tools,
 				'nonce' => wp_create_nonce( 'wmcp_execute' ),
-			),
+			],
 			200
 		);
 
@@ -159,10 +182,12 @@ class REST_API {
 	 * Permission check for the execute endpoint.
 	 * Only gates on plugin-enabled; per-tool auth is handled in execute_tool()
 	 * after the ability's own permission_callback is evaluated.
+	 *
+	 * @param \WP_REST_Request $request Request object.
 	 */
-	public function execute_permission_check( \WP_REST_Request $request ): bool|\WP_Error {
+	public function execute_permission_check( \WP_REST_Request $request ): bool|\WP_Error { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- Required by REST API signature.
 		if ( ! $this->settings->is_enabled() ) {
-			return new \WP_Error( 'wmcp_disabled', __( 'WebMCP for WordPress is not enabled.', 'webmcp-for-wordpress' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'wmcp_disabled', __( 'WebMCP for WordPress is not enabled.', 'webmcp-for-wordpress' ), [ 'status' => 404 ] );
 		}
 
 		return true;
@@ -170,6 +195,8 @@ class REST_API {
 
 	/**
 	 * Handle POST /execute/{ability} — validate, rate-limit, and run the ability.
+	 *
+	 * @param \WP_REST_Request $request Request object.
 	 */
 	public function execute_tool( \WP_REST_Request $request ): \WP_REST_Response|\WP_Error {
 		$ability_name = $request->get_param( 'ability' );
@@ -179,7 +206,10 @@ class REST_API {
 		$max_size = (int) apply_filters( 'wmcp_max_input_size', 100 * 1024 ); // 100 KB
 		if ( strlen( $request->get_body() ) > $max_size ) {
 			return new \WP_REST_Response(
-				array( 'code' => 'wmcp_payload_too_large', 'message' => __( 'Request payload exceeds the maximum allowed size.', 'webmcp-for-wordpress' ) ),
+				[
+					'code'    => 'wmcp_payload_too_large',
+					'message' => __( 'Request payload exceeds the maximum allowed size.', 'webmcp-for-wordpress' ),
+				],
 				400
 			);
 		}
@@ -187,14 +217,20 @@ class REST_API {
 		// Get registered abilities.
 		if ( ! function_exists( 'wp_get_abilities' ) ) {
 			return new \WP_REST_Response(
-				array( 'code' => 'wmcp_abilities_unavailable', 'message' => __( 'WordPress Abilities API is not available.', 'webmcp-for-wordpress' ) ),
+				[
+					'code'    => 'wmcp_abilities_unavailable',
+					'message' => __( 'WordPress Abilities API is not available.', 'webmcp-for-wordpress' ),
+				],
 				500
 			);
 		}
 
 		if ( ! wp_has_ability( $ability_name ) ) {
 			return new \WP_REST_Response(
-				array( 'code' => 'wmcp_not_found', 'message' => __( 'Tool not found.', 'webmcp-for-wordpress' ) ),
+				[
+					'code'    => 'wmcp_not_found',
+					'message' => __( 'Tool not found.', 'webmcp-for-wordpress' ),
+				],
 				404
 			);
 		}
@@ -204,7 +240,10 @@ class REST_API {
 		// Check wmcp_visibility — private abilities are never exposed.
 		if ( 'private' === $ability->get_meta_item( 'wmcp_visibility', 'public' ) ) {
 			return new \WP_REST_Response(
-				array( 'code' => 'wmcp_not_found', 'message' => __( 'Tool not found.', 'webmcp-for-wordpress' ) ),
+				[
+					'code'    => 'wmcp_not_found',
+					'message' => __( 'Tool not found.', 'webmcp-for-wordpress' ),
+				],
 				404
 			);
 		}
@@ -212,19 +251,25 @@ class REST_API {
 		// Check admin exposed-tools list.
 		if ( ! $this->settings->is_tool_exposed( $ability_name ) ) {
 			return new \WP_REST_Response(
-				array( 'code' => 'wmcp_not_found', 'message' => __( 'Tool not found.', 'webmcp-for-wordpress' ) ),
+				[
+					'code'    => 'wmcp_not_found',
+					'message' => __( 'Tool not found.', 'webmcp-for-wordpress' ),
+				],
 				404
 			);
 		}
 
 		// Parse input before permission check so callbacks can inspect it.
-		$input = $request->get_json_params() ?? array();
+		$input = $request->get_json_params() ?? [];
 
 		// Check the ability's own permission callback.
 		$permission = $ability->check_permissions( $input );
 		if ( true !== $permission ) {
 			return new \WP_REST_Response(
-				array( 'code' => 'wmcp_forbidden', 'message' => __( 'You do not have permission to use this tool.', 'webmcp-for-wordpress' ) ),
+				[
+					'code'    => 'wmcp_forbidden',
+					'message' => __( 'You do not have permission to use this tool.', 'webmcp-for-wordpress' ),
+				],
 				403
 			);
 		}
@@ -236,7 +281,10 @@ class REST_API {
 			$nonce = $request->get_header( 'x_wp_nonce' );
 			if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wmcp_execute' ) ) {
 				return new \WP_REST_Response(
-					array( 'code' => 'wmcp_invalid_nonce', 'message' => __( 'Invalid or expired security token.', 'webmcp-for-wordpress' ) ),
+					[
+						'code'    => 'wmcp_invalid_nonce',
+						'message' => __( 'Invalid or expired security token.', 'webmcp-for-wordpress' ),
+					],
 					403
 				);
 			}
@@ -254,7 +302,10 @@ class REST_API {
 		$allow = apply_filters( 'wmcp_allow_execution', true, $ability_name, $input, $user_id );
 		if ( is_wp_error( $allow ) ) {
 			return new \WP_REST_Response(
-				array( 'code' => $allow->get_error_code(), 'message' => $allow->get_error_message() ),
+				[
+					'code'    => $allow->get_error_code(),
+					'message' => $allow->get_error_message(),
+				],
 				403
 			);
 		}
@@ -262,7 +313,10 @@ class REST_API {
 		// Rate limit check.
 		if ( ! $this->rate_limiter->check_execution( $user_id, $ability_name ) ) {
 			$response = new \WP_REST_Response(
-				array( 'code' => 'wmcp_rate_limited', 'message' => __( 'Rate limit exceeded. Please wait before making more requests.', 'webmcp-for-wordpress' ) ),
+				[
+					'code'    => 'wmcp_rate_limited',
+					'message' => __( 'Rate limit exceeded. Please wait before making more requests.', 'webmcp-for-wordpress' ),
+				],
 				429
 			);
 			$response->header( 'Retry-After', '60' );
@@ -281,18 +335,23 @@ class REST_API {
 				do_action( 'wmcp_tool_executed', $ability_name, $user_id, false );
 
 				return new \WP_REST_Response(
-					array( 'code' => $result->get_error_code(), 'message' => $result->get_error_message() ),
+					[
+						'code'    => $result->get_error_code(),
+						'message' => $result->get_error_message(),
+					],
 					$result->get_error_data( 'status' ) ?? 500
 				);
 			}
 
 			$success = true;
-
 		} catch ( \Throwable $e ) {
 			do_action( 'wmcp_tool_executed', $ability_name, $user_id, false );
 
 			return new \WP_REST_Response(
-				array( 'code' => 'wmcp_execution_error', 'message' => __( 'Tool execution failed.', 'webmcp-for-wordpress' ) ),
+				[
+					'code'    => 'wmcp_execution_error',
+					'message' => __( 'Tool execution failed.', 'webmcp-for-wordpress' ),
+				],
 				500
 			);
 		}
@@ -307,7 +366,7 @@ class REST_API {
 		 */
 		do_action( 'wmcp_tool_executed', $ability_name, $user_id, $success );
 
-		return new \WP_REST_Response( array( 'result' => $result ), 200 );
+		return new \WP_REST_Response( [ 'result' => $result ], 200 );
 	}
 
 	// =========================================================================
@@ -316,10 +375,12 @@ class REST_API {
 
 	/**
 	 * Return a fresh nonce for the execution endpoint.
+	 *
+	 * @param \WP_REST_Request $request Request object.
 	 */
-	public function get_nonce( \WP_REST_Request $request ): \WP_REST_Response {
+	public function get_nonce( \WP_REST_Request $request ): \WP_REST_Response { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- Required by REST API signature.
 		return new \WP_REST_Response(
-			array( 'nonce' => wp_create_nonce( 'wmcp_execute' ) ),
+			[ 'nonce' => wp_create_nonce( 'wmcp_execute' ) ],
 			200
 		);
 	}
@@ -334,6 +395,6 @@ class REST_API {
 	 * to avoid IP spoofing.
 	 */
 	private function get_client_ip(): string {
-		return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+		return sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0' ) );
 	}
 }

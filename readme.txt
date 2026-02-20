@@ -4,7 +4,7 @@ Tags: ai, agents, webmcp, abilities, mcp
 Requires at least: 6.9
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 0.4.0
+Stable tag: 0.5.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,6 +13,8 @@ Bridges WordPress Abilities to the WebMCP browser API, making your site's capabi
 == Description ==
 
 **WebMCP for WordPress** connects the [WordPress Abilities API](https://developer.wordpress.org/apis/abilities-api/) to the [WebMCP browser standard](https://webmachinelearning.github.io/webmcp/), allowing AI agents running in Chrome 146+ to discover and invoke your site's registered capabilities as structured tools.
+
+[youtube https://youtu.be/7A34ZNz2bMM]
 
 = How It Works =
 
@@ -97,6 +99,13 @@ This feature (which allows agents to discover tools before visiting the page) is
 
 == Changelog ==
 
+= 0.5.0 =
+* TypeScript conversion: front-end bridge rewritten in TypeScript with full type safety
+* Build pipeline: @wordpress/scripts v31.5 with webpack, output to dist/ with .asset.php manifests
+* PHPCS compliance: CodeAtlantic coding standards, zero violations
+* PHPDoc: comprehensive documentation across all PHP source and test files
+* Cleanup: removed stale build artifacts
+
 = 0.4.0 =
 * Initial release
 * Four built-in tools: wp/search-posts, wp/get-post, wp/get-categories, wp/submit-comment
@@ -107,6 +116,9 @@ This feature (which allows agents to discover tools before visiting the page) is
 * ETag-based client-side caching (24h TTL)
 
 == Upgrade Notice ==
+
+= 0.5.0 =
+TypeScript rewrite, PHPCS compliance, improved build pipeline.
 
 = 0.4.0 =
 Initial release.

@@ -11,6 +11,12 @@
 
 WebMCP for WordPress connects the [WordPress Abilities API](https://developer.wordpress.org/apis/abilities-api/) to the [WebMCP browser standard](https://webmachinelearning.github.io/webmcp/), so AI agents running in Chrome 146+ can discover and call your site's capabilities as reliable, schema-driven tools.
 
+### Demo
+
+[![WebMCP for WordPress Demo](https://img.youtube.com/vi/7A34ZNz2bMM/maxresdefault.jpg)](https://youtu.be/7A34ZNz2bMM)
+
+> Gemini 2.5 Flash discovering and calling WordPress tools via Chrome's `navigator.modelContext` API on a live production site.
+
 ---
 
 ## What Is WebMCP?
@@ -249,8 +255,12 @@ webmcp-for-wordpress/
 │   ├── class-rest-api.php     # /tools, /execute, /nonce endpoints
 │   ├── class-rate-limiter.php # Transient-based rate limiting
 │   └── class-admin-page.php   # Settings UI
-├── assets/js/src/
-│   └── webmcp-for-wordpress.js       # navigator.modelContext.registerTool() calls
+├── src/
+│   ├── webmcp-for-wordpress.ts       # TypeScript source (navigator.modelContext bridge)
+│   └── types/webmcp.d.ts             # WebMCP type declarations
+├── dist/                             # Built output (@wordpress/scripts + webpack)
+│   ├── webmcp-for-wordpress.js       # Compiled bundle
+│   └── webmcp-for-wordpress.asset.php # WP dependency manifest with version hash
 └── tests/phpunit/             # 51 integration tests
 ```
 

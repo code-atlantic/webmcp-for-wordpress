@@ -3,7 +3,7 @@
  * Plugin Name: WebMCP for WordPress
  * Plugin URI:  https://github.com/code-atlantic/webmcp-for-wordpress
  * Description: Bridges WordPress Abilities to the WebMCP browser API (navigator.modelContext), making any WordPress site's capabilities discoverable and invocable by AI agents in Chrome 146+.
- * Version:     0.4.0
+ * Version:     0.5.0
  * Author:      Code Atlantic
  * Author URI:  https://code-atlantic.com
  * License:     GPL-2.0-or-later
@@ -20,7 +20,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WMCP_VERSION', '0.4.0' );
+define( 'WMCP_VERSION', '0.5.0' );
 define( 'WMCP_PLUGIN_FILE', __FILE__ );
 define( 'WMCP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WMCP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -43,7 +43,7 @@ function wmcp_activation_check(): void {
 				'6.9'
 			),
 			esc_html__( 'Plugin Activation Error', 'webmcp-for-wordpress' ),
-			array( 'back_link' => true )
+			[ 'back_link' => true ]
 		);
 	}
 
@@ -52,7 +52,7 @@ function wmcp_activation_check(): void {
 		wp_die(
 			esc_html__( 'WebMCP for WordPress requires the WordPress Abilities API. Please ensure you are running WordPress 6.9 or higher with the Abilities API available.', 'webmcp-for-wordpress' ),
 			esc_html__( 'Plugin Activation Error', 'webmcp-for-wordpress' ),
-			array( 'back_link' => true )
+			[ 'back_link' => true ]
 		);
 	}
 }

@@ -14,8 +14,8 @@ defined( 'ABSPATH' ) || exit;
  */
 class Settings {
 
-	const OPTION_ENABLED        = 'wmcp_enabled';
-	const OPTION_EXPOSED_TOOLS  = 'wmcp_exposed_tools';
+	const OPTION_ENABLED          = 'wmcp_enabled';
+	const OPTION_EXPOSED_TOOLS    = 'wmcp_exposed_tools';
 	const OPTION_DISCOVERY_PUBLIC = 'wmcp_discovery_public';
 
 	/**
@@ -26,31 +26,31 @@ class Settings {
 		register_setting(
 			'wmcp_settings_group',
 			self::OPTION_ENABLED,
-			array(
+			[
 				'type'              => 'boolean',
 				'default'           => false,
 				'sanitize_callback' => 'rest_sanitize_boolean',
-			)
+			]
 		);
 
 		register_setting(
 			'wmcp_settings_group',
 			self::OPTION_EXPOSED_TOOLS,
-			array(
+			[
 				'type'              => 'array',
-				'default'           => array(),
-				'sanitize_callback' => array( $this, 'sanitize_exposed_tools' ),
-			)
+				'default'           => [],
+				'sanitize_callback' => [ $this, 'sanitize_exposed_tools' ],
+			]
 		);
 
 		register_setting(
 			'wmcp_settings_group',
 			self::OPTION_DISCOVERY_PUBLIC,
-			array(
+			[
 				'type'              => 'boolean',
 				'default'           => false,
 				'sanitize_callback' => 'rest_sanitize_boolean',
-			)
+			]
 		);
 	}
 
@@ -90,7 +90,7 @@ class Settings {
 	 * @return string[] Tool name slugs.
 	 */
 	public function get_exposed_tools(): array {
-		return (array) get_option( self::OPTION_EXPOSED_TOOLS, array() );
+		return (array) get_option( self::OPTION_EXPOSED_TOOLS, [] );
 	}
 
 	/**
@@ -118,7 +118,7 @@ class Settings {
 	 */
 	public function sanitize_exposed_tools( $value ): array {
 		if ( ! is_array( $value ) ) {
-			return array();
+			return [];
 		}
 		return array_values( array_filter( array_map( 'sanitize_text_field', $value ) ) );
 	}

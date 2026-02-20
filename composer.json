@@ -10,7 +10,8 @@
     "phpunit/phpunit": "^9.6",
     "wp-phpunit/wp-phpunit": "^6.4",
     "yoast/phpunit-polyfills": "^1.0",
-    "doctrine/instantiator": "<2.1"
+    "doctrine/instantiator": "<2.1",
+    "code-atlantic/coding-standards": "^1.1"
   },
   "autoload": {
     "psr-4": {
@@ -19,7 +20,8 @@
   },
   "scripts": {
     "test": "phpunit",
-    "lint": "phpcs --standard=WordPress includes/ webmcp-for-wordpress.php"
+    "lint": "phpcs",
+    "lint:fix": "phpcbf"
   },
   "config": {
     "allow-plugins": {
