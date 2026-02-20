@@ -157,21 +157,12 @@ class REST_API {
 
 	/**
 	 * Permission check for the execute endpoint.
-	 * Requires authentication and a valid nonce.
+	 * Only gates on plugin-enabled; per-tool auth is handled in execute_tool()
+	 * after the ability's own permission_callback is evaluated.
 	 */
 	public function execute_permission_check( \WP_REST_Request $request ): bool|\WP_Error {
 		if ( ! $this->settings->is_enabled() ) {
 			return new \WP_Error( 'wmcp_disabled', __( 'WebMCP Bridge is not enabled.', 'webmcp-bridge' ), array( 'status' => 404 ) );
-		}
-
-		if ( ! is_user_logged_in() ) {
-			return new \WP_Error( 'wmcp_auth_required', __( 'Authentication required.', 'webmcp-bridge' ), array( 'status' => 401 ) );
-		}
-
-		// Verify nonce.
-		$nonce = $request->get_header( 'x_wp_nonce' );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wmcp_execute' ) ) {
-			return new \WP_Error( 'wmcp_invalid_nonce', __( 'Invalid or expired security token.', 'webmcp-bridge' ), array( 'status' => 403 ) );
 		}
 
 		return true;
@@ -229,13 +220,25 @@ class REST_API {
 		// Parse input before permission check so callbacks can inspect it.
 		$input = $request->get_json_params() ?? array();
 
-		// Re-check permissions at execution time.
+		// Check the ability's own permission callback.
 		$permission = $ability->check_permissions( $input );
 		if ( true !== $permission ) {
 			return new \WP_REST_Response(
 				array( 'code' => 'wmcp_forbidden', 'message' => __( 'You do not have permission to use this tool.', 'webmcp-bridge' ) ),
 				403
 			);
+		}
+
+		// Nonce verification for logged-in users — prevents CSRF on authenticated tools.
+		// Unauthenticated requests to public tools skip this (no nonce available).
+		if ( is_user_logged_in() ) {
+			$nonce = $request->get_header( 'x_wp_nonce' );
+			if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wmcp_execute' ) ) {
+				return new \WP_REST_Response(
+					array( 'code' => 'wmcp_invalid_nonce', 'message' => __( 'Invalid or expired security token.', 'webmcp-bridge' ) ),
+					403
+				);
+			}
 		}
 
 		/**

@@ -129,18 +129,22 @@ class Test_REST_API extends WP_UnitTestCase {
 	// POST /webmcp/v1/execute/{ability}
 	// -------------------------------------------------------------------------
 
-	public function test_execute_returns_401_for_anonymous_user(): void {
+	public function test_execute_succeeds_anonymously_for_public_tool(): void {
+		// get-categories has __return_true permission callback — no auth needed.
 		wp_set_current_user( 0 );
 
 		$request = new WP_REST_Request( 'POST', '/webmcp/v1/execute/webmcp%2Fget-categories' );
+		$request->set_body( '{}' );
+		$request->set_header( 'Content-Type', 'application/json' );
 		$response = rest_do_request( $request );
 
-		$this->assertSame( 401, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 	}
 
-	public function test_execute_returns_403_without_nonce(): void {
-		// Logged in but no nonce header.
+	public function test_execute_returns_403_without_nonce_for_logged_in_user(): void {
+		// Logged-in users must send a nonce even on public tools (CSRF protection).
 		$request  = new WP_REST_Request( 'POST', '/webmcp/v1/execute/webmcp%2Fget-categories' );
+		$request->set_body( '{}' );
 		$response = rest_do_request( $request );
 
 		$this->assertSame( 403, $response->get_status() );
