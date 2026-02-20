@@ -4,7 +4,7 @@ Tags: ai, agents, webmcp, abilities, mcp
 Requires at least: 6.9
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.0.0
+Stable tag: 0.4.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -85,7 +85,7 @@ Yes. Tool execution requires authentication (visitors must be logged in). The ad
 
 = Can anonymous visitors use tools? =
 
-No — execution always requires authentication. You can optionally allow anonymous visitors to *discover* available tools by enabling "Allow agents to discover tools without logging in" in settings, but they still cannot execute anything without appropriate permissions.
+It depends on the tool. Public tools (like the built-in search and category tools) can be executed by anyone. Write tools and tools with custom permission callbacks may require authentication. The admin's "Exposed Tools" list controls which tools are visible.
 
 = Does this work with the WordPress MCP Adapter? =
 
@@ -97,9 +97,9 @@ This feature (which allows agents to discover tools before visiting the page) is
 
 == Changelog ==
 
-= 1.0.0 =
+= 0.4.0 =
 * Initial release
-* Four built-in tools: search-posts, get-post, get-categories, submit-comment
+* Four built-in tools: wp/search-posts, wp/get-post, wp/get-categories, wp/submit-comment
 * Per-tool visibility control via Settings checkboxes
 * Public discovery toggle
 * Rate limiting: 30 executions/min per user, 100 discovery requests/min per IP
@@ -108,5 +108,5 @@ This feature (which allows agents to discover tools before visiting the page) is
 
 == Upgrade Notice ==
 
-= 1.0.0 =
+= 0.4.0 =
 Initial release.

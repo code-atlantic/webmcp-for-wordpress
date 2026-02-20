@@ -1,10 +1,10 @@
-# WebMCP for WordPress for WordPress
+# WebMCP for WordPress
 
 [![WordPress](https://img.shields.io/badge/WordPress-6.9%2B-21759B?logo=wordpress&logoColor=white)](https://wordpress.org)
 [![PHP](https://img.shields.io/badge/PHP-8.0%2B-777BB4?logo=php&logoColor=white)](https://php.net)
 [![Chrome](https://img.shields.io/badge/Chrome-146%2B-4285F4?logo=googlechrome&logoColor=white)](https://developer.chrome.com/blog/webmcp-epp)
 [![License](https://img.shields.io/badge/License-GPL--2.0--or--later-blue)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-50%20passing-brightgreen)](#testing)
+[![Tests](https://img.shields.io/badge/Tests-51%20passing-brightgreen)](#testing)
 [![WebMCP Spec](https://img.shields.io/badge/spec-WebMCP%20W3C-orange)](https://webmachinelearning.github.io/webmcp/)
 
 **Turn any WordPress site into a structured tool server for AI agents** — no custom API, no scraping, no prompt engineering required.
@@ -63,10 +63,10 @@ Four starter tools are included out of the box:
 
 | Tool | Description | Auth |
 |------|-------------|------|
-| `search-posts` | Full-text search across published posts | Public |
-| `get-post` | Retrieve a post by ID or slug with full content | Public |
-| `get-categories` | List all categories with counts and descriptions | Public |
-| `submit-comment` | Submit a comment (respects WP comment settings) | Configurable |
+| `wp/search-posts` | Full-text search across published posts | Public |
+| `wp/get-post` | Retrieve a post by ID or slug with full content | Public |
+| `wp/get-categories` | List all categories with counts and descriptions | Public |
+| `wp/submit-comment` | Submit a comment (respects WP comment settings) | Configurable |
 
 Disable all built-ins with one filter:
 ```php
@@ -145,7 +145,7 @@ The plugin registers three endpoints under `/wp-json/webmcp/v1/`:
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/tools` | List all tools visible to the current user |
-| `POST` | `/execute/{ability}` | Run a tool (requires auth + nonce) |
+| `POST` | `/execute/{ability}` | Run a tool (nonce required for write tools) |
 | `GET` | `/nonce` | Refresh the execution nonce |
 
 The `/tools` endpoint supports:
@@ -171,7 +171,7 @@ The `/tools` endpoint supports:
 ```php
 // Allow/block a tool from appearing at all
 add_filter( 'wmcp_expose_ability', function ( $expose, $name, $ability ) {
-    return $name !== 'submit-comment'; // hide comment tool
+    return $name !== 'wp/submit-comment'; // hide comment tool
 }, 10, 3 );
 
 // Customize the tool definition before it's sent to the browser
@@ -204,7 +204,7 @@ add_filter( 'wmcp_should_enqueue', fn() => is_front_page() );
 ## Security
 
 - **HTTPS enforced** — bridge script does not load over HTTP
-- **Nonce verification** on every execute request (`X-WP-Nonce` header)
+- **Nonce verification** on write tool execute requests (`X-WP-Nonce` header) — read-only tools skip this
 - **Permission callbacks** re-evaluated at execution time (not just discovery)
 - **Private visibility** flag prevents internal abilities from appearing
 - **Admin allowlist** — site owner controls exactly which tools are exposed
@@ -217,7 +217,7 @@ add_filter( 'wmcp_should_enqueue', fn() => is_front_page() );
 
 ## Testing
 
-50 PHPUnit integration tests run against a real WordPress 6.9 environment via [wp-env](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/).
+51 PHPUnit integration tests run against a real WordPress 6.9 environment via [wp-env](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/).
 
 ```bash
 # Start the test environment
@@ -251,7 +251,7 @@ webmcp-for-wordpress/
 │   └── class-admin-page.php   # Settings UI
 ├── assets/js/src/
 │   └── webmcp-for-wordpress.js       # navigator.modelContext.registerTool() calls
-└── tests/phpunit/             # 50 integration tests
+└── tests/phpunit/             # 51 integration tests
 ```
 
 ---
