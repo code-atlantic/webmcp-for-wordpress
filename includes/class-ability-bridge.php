@@ -159,9 +159,34 @@ class Ability_Bridge {
 			return $empty;
 		}
 
-		// Ensure any 'properties' key in the schema is also an object, not array.
-		if ( isset( $schema['properties'] ) && is_array( $schema['properties'] ) && empty( $schema['properties'] ) ) {
-			$schema['properties'] = new \stdClass();
+		return $this->fix_empty_properties( $schema );
+	}
+
+	/**
+	 * Recursively cast any empty 'properties' arrays to stdClass so they
+	 * serialize as JSON objects ({}) rather than arrays ([]).
+	 * Gemini and other models reject [] as an invalid JSON Schema properties value.
+	 *
+	 * @param array $schema Schema to fix.
+	 * @return array
+	 */
+	private function fix_empty_properties( array $schema ): array {
+		if ( isset( $schema['properties'] ) && is_array( $schema['properties'] ) ) {
+			if ( empty( $schema['properties'] ) ) {
+				$schema['properties'] = new \stdClass();
+			} else {
+				foreach ( $schema['properties'] as &$prop ) {
+					if ( is_array( $prop ) ) {
+						$prop = $this->fix_empty_properties( $prop );
+					}
+				}
+				unset( $prop );
+			}
+		}
+
+		// Also recurse into 'items' for array schemas.
+		if ( isset( $schema['items'] ) && is_array( $schema['items'] ) ) {
+			$schema['items'] = $this->fix_empty_properties( $schema['items'] );
 		}
 
 		return $schema;

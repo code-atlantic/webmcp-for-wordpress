@@ -242,7 +242,7 @@ class Builtin_Tools {
 				'category'            => self::CATEGORY,
 				'input_schema'        => array(
 					'type'       => 'object',
-					'properties' => array(),
+					'properties' => new \stdClass(),
 				),
 				'output_schema'       => array(
 					'type'  => 'array',
