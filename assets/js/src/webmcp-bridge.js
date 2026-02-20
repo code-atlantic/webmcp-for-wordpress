@@ -86,9 +86,10 @@
 	async function fetchTools() {
 		const cached = getCachedTools();
 
-		const headers = {
-			'X-WP-Nonce': currentNonce,
-		};
+		// Do NOT send X-WP-Nonce on the tools request — WP core rejects an invalid
+		// nonce with 403 before our permission callback runs. Cookie auth alone is
+		// sufficient for the is_user_logged_in() check on the tools endpoint.
+		const headers = {};
 
 		if ( cached?.etag ) {
 			headers[ 'If-None-Match' ] = `"${ cached.etag }"`;
