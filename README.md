@@ -108,9 +108,18 @@ Upload to `wp-content/plugins/webmcp-abilities/` and activate.
 
 ## Registering Custom Tools
 
-Any plugin can expose tools to AI agents by registering WordPress Abilities on the `wp_abilities_api_init` hook:
+Any plugin can expose tools to AI agents by registering WordPress Abilities. First register your category, then your abilities:
 
 ```php
+// 1. Register your category.
+add_action( 'wp_abilities_api_categories_init', function () {
+    wp_register_ability_category( 'my-plugin', array(
+        'label'       => __( 'My Plugin', 'my-plugin' ),
+        'description' => __( 'Tools provided by My Plugin.', 'my-plugin' ),
+    ) );
+} );
+
+// 2. Register abilities that use the category.
 add_action( 'wp_abilities_api_init', function () {
     wp_register_ability(
         'my-plugin/get-products',
@@ -134,7 +143,9 @@ add_action( 'wp_abilities_api_init', function () {
 } );
 ```
 
-WebMCP Abilities automatically picks up any registered ability and exposes it — no extra configuration needed.
+> **Important:** WordPress requires the category to be registered via `wp_register_ability_category()` before any ability can use it. Abilities with unregistered categories are silently dropped by core. You can also use the `'webmcp'` category registered by this plugin.
+
+WebMCP Abilities automatically picks up any registered ability — but the site admin must enable third-party tools in **Settings → WebMCP** (they default to hidden on fresh installs).
 
 ### Visibility Control
 

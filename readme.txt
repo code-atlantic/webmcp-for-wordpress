@@ -53,18 +53,37 @@ The WebMCP standard requires a secure context. The front-end bridge will not loa
 
 = For Plugin Developers =
 
-Any ability registered via `wp_register_ability()` automatically becomes a WebMCP tool. Add a `wmcp_visibility` key to your ability definition to control discoverability:
+Any ability registered via `wp_register_ability()` automatically becomes a WebMCP tool. The site admin must enable it in **Settings → WebMCP** (third-party tools default to hidden on fresh installs).
 
 `
-wp_register_ability( 'my-plugin/my-action', array(
-    'label'               => 'My Action',
-    'description'         => 'Does something useful for agents.',
-    'wmcp_visibility'     => 'public',   // 'public' (default) or 'private'
-    'inputSchema'         => array( ... ),
-    'execute_callback'    => function( $input ) { ... },
-    'permission_callback' => function() { return current_user_can( 'read' ); },
-) );
+// Register your category first (on the wp_abilities_api_categories_init hook).
+add_action( 'wp_abilities_api_categories_init', function () {
+    wp_register_ability_category( 'my-plugin', array(
+        'label'       => 'My Plugin',
+        'description' => 'Tools provided by My Plugin.',
+    ) );
+} );
+
+// Then register abilities (on the wp_abilities_api_init hook).
+add_action( 'wp_abilities_api_init', function () {
+    wp_register_ability( 'my-plugin/my-action', array(
+        'label'               => 'My Action',
+        'description'         => 'Does something useful for agents.',
+        'category'            => 'my-plugin',
+        'input_schema'        => array( ... ),
+        'execute_callback'    => function( $input ) { ... },
+        'permission_callback' => function() { return current_user_can( 'read' ); },
+        'meta'                => array( 'wmcp_visibility' => 'public' ),
+    ) );
+} );
 `
+
+**Important:** WordPress requires the category to be registered via `wp_register_ability_category()` before any ability can use it. Abilities with unregistered categories are silently dropped by WordPress core. Alternatively, you can use the `'webmcp'` category registered by this plugin.
+
+Visibility options via the `meta` array:
+
+* `'wmcp_visibility' => 'public'` (default) — visible to agents, admin can toggle in settings
+* `'wmcp_visibility' => 'private'` — never exposed, even if admin enables it
 
 == Installation ==
 
@@ -83,7 +102,7 @@ wp_register_ability( 'my-plugin/my-action', array(
 
 = Do I need to configure anything? =
 
-Just enable the plugin on the Settings → WebMCP page. Four built-in tools work immediately. Other plugins that register WordPress Abilities will also appear automatically.
+Just enable the plugin on the Settings → WebMCP page. Four built-in tools work immediately. Third-party abilities appear in the settings panel but are hidden by default — check the box next to each tool you want to expose.
 
 = Is this safe? =
 
